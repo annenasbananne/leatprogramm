@@ -1,356 +1,398 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="de" data-theme="light">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>LEaT X 26 – Timetable</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;900&family=Barlow+Condensed:wght@400;600;700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg:        #ffffff;
-    --surface:   #f4f4f2;
-    --card:      #ffffff;
-    --border:    #e0dfd8;
-    --border-strong: #c8c7be;
-    --text:      #111110;
-    --muted:     #888880;
-    --accent:    #c8f000;
-    --accent-dk: #96b800;
-    --red:       #e8001e;
-    --stage-main:      #111110;
-    --stage-community: #0050c8;
-    --stage-pixel:     #c8006e;
-    --stage-specials:  #e07000;
-  }
-  * { margin:0; padding:0; box-sizing:border-box; }
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Barlow', sans-serif;
-    font-size: 15px;
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
+/* ── TOKENS ───────────────────────────────────────────────── */
+:root {
+  --accent:    #c8f000;
+  --accent-dk: #96b800;
+  --red:       #e8001e;
+  --stage-main:      #1c1c1e;
+  --stage-community: #0a84ff;
+  --stage-pixel:     #bf5af2;
+  --stage-specials:  #ff9f0a;
+}
+[data-theme="light"] {
+  --bg:          #f2f2f7;
+  --bg2:         #ffffff;
+  --surface:     #ffffff;
+  --surface2:    #f2f2f7;
+  --border:      rgba(60,60,67,0.13);
+  --border2:     rgba(60,60,67,0.08);
+  --text:        #1c1c1e;
+  --text2:       #3a3a3c;
+  --muted:       #8e8e93;
+  --header-bg:   rgba(242,242,247,0.85);
+  --card-shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
+}
+[data-theme="dark"] {
+  --bg:          #000000;
+  --bg2:         #1c1c1e;
+  --surface:     #1c1c1e;
+  --surface2:    #2c2c2e;
+  --border:      rgba(255,255,255,0.1);
+  --border2:     rgba(255,255,255,0.06);
+  --text:        #ffffff;
+  --text2:       #ebebf5;
+  --muted:       #8e8e93;
+  --header-bg:   rgba(0,0,0,0.85);
+  --card-shadow: 0 1px 3px rgba(0,0,0,0.4);
+  --stage-main:  #ffffff;
+}
 
-  /* HEADER */
-  header {
-    position: sticky; top: 0; z-index: 100;
-    background: var(--text);
-    padding: 0 16px;
-  }
-  .header-top {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 10px 0 8px;
-    border-bottom: 1px solid #2a2a28;
-  }
-  .logo { display: flex; align-items: baseline; gap: 5px; }
-  .logo-leat {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 900; font-size: 1.3rem;
-    letter-spacing: 0.06em; text-transform: uppercase; color: #fff;
-  }
-  .logo-x {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 900; font-size: 1.3rem; color: var(--accent);
-  }
-  .logo-year {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 400; font-size: 0.78rem; color: #777; letter-spacing: 0.1em;
-  }
-  .live-clock {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 0.85rem; letter-spacing: 0.06em; color: #aaa;
-    display: flex; align-items: center; gap: 7px;
-  }
-  .live-dot {
-    width: 7px; height: 7px; border-radius: 50%;
-    background: var(--accent); animation: blink 2s infinite;
-  }
-  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.2} }
+/* ── RESET ────────────────────────────────────────────────── */
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 15px;
+  line-height: 1.4;
+  min-height: 100vh;
+  overflow-x: hidden;
+  transition: background 0.3s, color 0.3s;
+}
 
-  /* TABS */
-  .tabs {
-    display: flex; gap: 0; overflow-x: auto;
-    scrollbar-width: none; padding-top: 5px;
-  }
-  .tabs::-webkit-scrollbar { display: none; }
-  .tab {
-    flex-shrink: 0; padding: 8px 16px 7px;
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 700; font-size: 0.78rem;
-    letter-spacing: 0.1em; text-transform: uppercase;
-    cursor: pointer; border: none; background: transparent;
-    color: #666; border-bottom: 3px solid transparent;
-    transition: color 0.15s, border-color 0.15s;
-  }
-  .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
-  .tab:hover:not(.active) { color: #ccc; }
-  .fav-badge {
-    display: inline-block; background: var(--red); color: #fff;
-    border-radius: 10px; font-size: 0.65rem; padding: 1px 5px;
-    margin-left: 4px; vertical-align: middle;
-    font-family: 'Barlow', sans-serif; font-weight: 700;
-  }
+/* ── HEADER ───────────────────────────────────────────────── */
+header {
+  position: sticky; top: 0; z-index: 200;
+  background: var(--header-bg);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  border-bottom: 0.5px solid var(--border);
+  padding: 0 16px;
+  transition: background 0.3s;
+}
+.header-top {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 0 10px;
+}
+.logo { display: flex; align-items: baseline; gap: 4px; }
+.logo-leat {
+  font-weight: 700; font-size: 1.2rem; letter-spacing: -0.02em; color: var(--text);
+}
+.logo-x { font-weight: 700; font-size: 1.2rem; color: var(--accent-dk); letter-spacing: -0.02em; }
+.logo-year { font-weight: 400; font-size: 0.72rem; color: var(--muted); margin-left: 2px; letter-spacing: 0.02em; }
 
-  /* STAGE FILTER */
-  .stage-filter {
-    display: flex; gap: 6px; padding: 10px 16px;
-    overflow-x: auto; scrollbar-width: none;
-    background: var(--surface); border-bottom: 1px solid var(--border);
-  }
-  .stage-filter::-webkit-scrollbar { display: none; }
-  .stage-btn {
-    flex-shrink: 0; padding: 4px 13px; border-radius: 2px;
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 700; font-size: 0.72rem;
-    letter-spacing: 0.08em; text-transform: uppercase;
-    cursor: pointer; border: 1.5px solid; background: transparent;
-    transition: all 0.12s; white-space: nowrap;
-  }
-  .stage-btn[data-stage="all"]       { color: var(--text); border-color: var(--border-strong); }
-  .stage-btn[data-stage="main"]      { color: var(--stage-main); border-color: var(--stage-main); }
-  .stage-btn[data-stage="community"] { color: var(--stage-community); border-color: var(--stage-community); }
-  .stage-btn[data-stage="pixel"]     { color: var(--stage-pixel); border-color: var(--stage-pixel); }
-  .stage-btn[data-stage="specials"]  { color: var(--stage-specials); border-color: var(--stage-specials); }
-  .stage-btn.active { color: #fff !important; }
-  .stage-btn[data-stage="all"].active       { background: var(--text); }
-  .stage-btn[data-stage="main"].active      { background: var(--stage-main); }
-  .stage-btn[data-stage="community"].active { background: var(--stage-community); }
-  .stage-btn[data-stage="pixel"].active     { background: var(--stage-pixel); }
-  .stage-btn[data-stage="specials"].active  { background: var(--stage-specials); }
+.header-right { display: flex; align-items: center; gap: 10px; }
 
-  /* CONTENT */
-  .content { padding: 0 16px 80px; }
-  .day-view { display: none; }
-  .day-view.active { display: block; }
+.live-clock {
+  font-size: 0.78rem; font-weight: 500; color: var(--muted);
+  display: flex; align-items: center; gap: 5px;
+}
+.live-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: #30d158; animation: blink 2s infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
 
-  /* NOW BANNER */
-  .now-banner {
-    margin: 12px 0 0; padding: 9px 13px;
-    background: var(--accent); border-radius: 2px;
-    font-size: 0.78rem; color: var(--text);
-    display: none; align-items: flex-start; gap: 8px; font-weight: 500;
-  }
-  .now-banner.visible { display: flex; }
-  .now-banner strong { font-weight: 700; white-space: nowrap; }
+/* Dark mode toggle */
+.dm-toggle {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: var(--surface2); border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.9rem; transition: background 0.2s;
+  color: var(--text);
+}
+.dm-toggle:active { transform: scale(0.92); }
 
-  /* CONFLICT BANNER */
-  .conflict-banner {
-    margin: 6px 0 0; padding: 9px 13px;
-    background: #fff2f4; border: 1.5px solid var(--red); border-radius: 2px;
-    font-size: 0.78rem; color: var(--red);
-    display: none; align-items: flex-start; gap: 9px; font-weight: 500; line-height: 1.45;
-  }
-  .conflict-banner.visible { display: flex; }
-  .conflict-banner strong { font-weight: 700; }
-  .conflict-icon { font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
+/* ── DAY TABS ─────────────────────────────────────────────── */
+.tabs {
+  display: flex; overflow-x: auto; scrollbar-width: none;
+  gap: 0; padding-bottom: 1px;
+}
+.tabs::-webkit-scrollbar { display: none; }
+.tab {
+  flex-shrink: 0; padding: 9px 14px 8px;
+  font-size: 0.8rem; font-weight: 600; letter-spacing: -0.01em;
+  cursor: pointer; border: none; background: transparent;
+  color: var(--muted); border-bottom: 2px solid transparent;
+  transition: color 0.15s, border-color 0.15s;
+  white-space: nowrap;
+}
+.tab.active { color: var(--accent-dk); border-bottom-color: var(--accent-dk); }
+.fav-badge {
+  display: inline-block; background: var(--red); color: #fff;
+  border-radius: 8px; font-size: 0.6rem; font-weight: 700;
+  padding: 1px 5px; margin-left: 3px; vertical-align: middle;
+}
 
-  /* TIME LABELS */
-  .time-label {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 700; font-size: 0.7rem; letter-spacing: 0.1em;
-    color: var(--muted); padding: 14px 0 5px;
-    border-top: 1px solid var(--border); margin-top: 4px; text-transform: uppercase;
-  }
-  .time-label:first-child { border-top: none; margin-top: 0; }
+/* ── STAGE NAV BAR (mobile) ───────────────────────────────── */
+.stage-nav {
+  background: var(--header-bg);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  border-bottom: 0.5px solid var(--border);
+  padding: 8px 16px;
+}
+.stage-nav-inner {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+}
+.stage-arrow {
+  flex-shrink: 0; width: 28px; height: 28px; border-radius: 50%;
+  background: var(--surface2); border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.75rem; color: var(--text2); transition: background 0.15s, opacity 0.15s;
+}
+.stage-arrow:disabled { opacity: 0.25; cursor: default; }
+.stage-arrow:not(:disabled):active { background: var(--border); }
 
-  /* SESSION CARDS */
-  .session-wrap { }
-  .session-card {
-    background: var(--card); border: 1.5px solid var(--border);
-    border-left: 4px solid var(--border-strong); border-radius: 2px;
-    margin-bottom: 6px; overflow: hidden;
-    transition: box-shadow 0.15s;
-    position: relative;
-  }
-  .session-card:hover { box-shadow: 0 2px 10px rgba(0,0,0,0.07); }
+.stage-label-area { flex: 1; text-align: center; }
+.stage-label-name {
+  font-size: 0.82rem; font-weight: 600; letter-spacing: -0.01em;
+  color: var(--text); display: block;
+}
+.stage-label-sub {
+  font-size: 0.65rem; color: var(--muted); font-weight: 400;
+}
 
-  .stage-main      .session-card { border-left-color: var(--stage-main); }
-  .stage-community .session-card { border-left-color: var(--stage-community); }
-  .stage-pixel     .session-card { border-left-color: var(--stage-pixel); }
-  .stage-specials  .session-card { border-left-color: var(--stage-specials); }
+/* Dots */
+.stage-dots {
+  display: flex; justify-content: center; gap: 5px; margin-top: 5px;
+}
+.stage-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--muted); opacity: 0.3;
+  transition: opacity 0.2s, transform 0.2s, background 0.2s;
+  cursor: pointer;
+}
+.stage-dot.active { opacity: 1; transform: scale(1.3); }
+.stage-dot[data-stage="all"]       { background: var(--text); }
+.stage-dot[data-stage="main"]      { background: var(--stage-main); }
+.stage-dot[data-stage="community"] { background: var(--stage-community); }
+.stage-dot[data-stage="pixel"]     { background: var(--stage-pixel); }
+.stage-dot[data-stage="specials"]  { background: var(--stage-specials); }
 
-  .session-card.now-playing {
-    background: #f9fde8;
-    border-color: var(--accent-dk);
-    box-shadow: 0 0 0 1px rgba(150,184,0,0.2);
-  }
-  .session-card.favorited { background: #fafafa; }
-  .session-card.favorited.conflict {
-    border-right: 3px solid var(--red);
-  }
+/* Desktop pill filter */
+.stage-filter-desktop {
+  display: none;
+  gap: 6px; padding: 10px 16px;
+  background: var(--header-bg);
+  backdrop-filter: saturate(180%) blur(20px);
+  border-bottom: 0.5px solid var(--border);
+  overflow-x: auto; scrollbar-width: none;
+}
+.stage-filter-desktop::-webkit-scrollbar { display: none; }
+.stage-pill {
+  flex-shrink: 0; padding: 5px 14px; border-radius: 100px;
+  font-size: 0.75rem; font-weight: 600;
+  cursor: pointer; border: 1.5px solid var(--border);
+  background: transparent; color: var(--muted);
+  transition: all 0.15s; white-space: nowrap;
+}
+.stage-pill.active { color: #fff; border-color: transparent; }
+.stage-pill[data-stage="all"].active       { background: var(--text2); }
+.stage-pill[data-stage="main"].active      { background: var(--stage-main); }
+.stage-pill[data-stage="community"].active { background: var(--stage-community); }
+.stage-pill[data-stage="pixel"].active     { background: var(--stage-pixel); }
+.stage-pill[data-stage="specials"].active  { background: var(--stage-specials); }
 
-  .card-header {
-    display: flex; align-items: flex-start;
-    padding: 10px 12px 10px 10px; gap: 10px;
-    cursor: pointer; user-select: none;
-  }
-  .card-main { flex: 1; min-width: 0; }
-  .card-meta {
-    display: flex; align-items: center; gap: 6px;
-    margin-bottom: 3px; flex-wrap: wrap;
-  }
-  .card-time {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 0.72rem; font-weight: 600; letter-spacing: 0.06em;
-    color: var(--muted); white-space: nowrap;
-  }
-  .card-stage-label {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 0.63rem; font-weight: 700; letter-spacing: 0.1em;
-    text-transform: uppercase; padding: 1px 7px; border-radius: 1px; white-space: nowrap;
-  }
-  .stage-main      .card-stage-label { background: #ebebeb; color: var(--stage-main); }
-  .stage-community .card-stage-label { background: #e0eaff; color: var(--stage-community); }
-  .stage-pixel     .card-stage-label { background: #fce0f0; color: var(--stage-pixel); }
-  .stage-specials  .card-stage-label { background: #ffefd6; color: var(--stage-specials); }
+/* ── CONTENT ──────────────────────────────────────────────── */
+.content { padding-bottom: 80px; }
 
-  .now-tag {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 0.63rem; font-weight: 900; letter-spacing: 0.1em;
-    background: var(--accent); color: var(--text);
-    padding: 1px 7px; border-radius: 1px; animation: blink 2s infinite;
-  }
-  .card-title {
-    font-family: 'Barlow', sans-serif;
-    font-weight: 600; font-size: 0.88rem; line-height: 1.35; color: var(--text);
-  }
-  .card-actions {
-    display: flex; align-items: center; gap: 5px;
-    flex-shrink: 0; padding-top: 1px;
-  }
-  .conflict-tag {
-    font-size: 0.95rem; line-height: 1; cursor: default;
-    animation: shake 0.4s ease;
-  }
-  @keyframes shake {
-    0%,100%{transform:translateX(0)} 25%{transform:translateX(-2px)} 75%{transform:translateX(2px)}
-  }
-  .fav-btn {
-    background: none; border: none; cursor: pointer;
-    font-size: 1.05rem; padding: 2px; line-height: 1;
-    color: var(--border-strong); transition: color 0.15s, transform 0.15s;
-  }
-  .fav-btn.active { color: var(--red); }
-  .fav-btn:hover { transform: scale(1.2); color: var(--red); }
-  .expand-btn {
-    background: none; border: none; cursor: pointer;
-    color: var(--muted); font-size: 0.8rem; padding: 2px 3px;
-    transition: transform 0.2s; line-height: 1;
-  }
-  .session-card.expanded .expand-btn { transform: rotate(180deg); }
+.day-view { display: none; }
+.day-view.active { display: block; }
+#fav-view { display: none; }
+#fav-view.active { display: block; padding: 0 16px; }
 
-  /* CARD DETAILS */
-  .card-details {
-    display: none; padding: 0 12px 11px 14px;
-    border-top: 1px solid var(--border);
-  }
-  .session-card.expanded .card-details { display: block; }
-  .card-speaker {
-    font-size: 0.78rem; color: var(--muted); padding-top: 8px; line-height: 1.5;
-  }
-  .card-speaker strong { color: var(--text); font-weight: 600; }
-  .card-link {
-    display: inline-block; margin-top: 9px;
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 700; font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase;
-    color: var(--stage-community); text-decoration: none;
-    border: 1.5px solid var(--stage-community); padding: 4px 12px; border-radius: 1px;
-    transition: background 0.12s, color 0.12s;
-  }
-  .card-link:hover { background: var(--stage-community); color: #fff; }
+/* ── BANNERS ──────────────────────────────────────────────── */
+.banner-area { padding: 0 16px; }
+.now-banner {
+  margin: 10px 0 0; padding: 10px 13px;
+  background: var(--accent);
+  border-radius: 12px;
+  font-size: 0.78rem; font-weight: 500; color: #1c1c1e;
+  display: none; align-items: flex-start; gap: 8px;
+}
+.now-banner.visible { display: flex; }
+.now-banner strong { font-weight: 700; }
 
-  /* FAVORITES */
-  #fav-view { display: none; }
-  #fav-view.active { display: block; }
-  .fav-empty {
-    text-align: center; padding: 60px 20px;
-    color: var(--muted); font-size: 0.85rem; line-height: 1.7;
-  }
-  .fav-empty .icon { font-size: 2rem; margin-bottom: 10px; display: block; }
-  .day-header {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 900; font-size: 0.72rem; letter-spacing: 0.15em;
-    text-transform: uppercase; color: var(--muted);
-    padding: 16px 0 6px; border-bottom: 1px solid var(--border); margin-bottom: 6px;
-  }
+.conflict-banner {
+  margin: 6px 0 0; padding: 10px 13px;
+  background: rgba(232,0,30,0.08);
+  border: 1px solid rgba(232,0,30,0.25);
+  border-radius: 12px;
+  font-size: 0.78rem; color: var(--red);
+  display: none; align-items: flex-start; gap: 9px; font-weight: 500; line-height: 1.45;
+}
+.conflict-banner.visible { display: flex; }
+.conflict-banner strong { font-weight: 700; }
 
-  /* FOOTER */
-  .footer-note {
-    position: fixed; bottom: 0; left: 0; right: 0;
-    background: var(--surface); border-top: 1px solid var(--border);
-    padding: 7px 16px; font-size: 0.65rem; color: var(--muted);
-    text-align: center; font-family: 'Barlow Condensed', sans-serif; letter-spacing: 0.06em;
-  }
-  .footer-note a { color: var(--stage-community); text-decoration: none; }
+/* ── SWIPE PANELS ─────────────────────────────────────────── */
+.stage-panels-wrapper { overflow: hidden; touch-action: pan-y; }
+.stage-panels {
+  display: flex;
+  transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+  will-change: transform;
+}
+.stage-panel { flex-shrink: 0; width: 100%; padding: 0 16px 8px; }
 
-  ::-webkit-scrollbar { width: 4px; }
-  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+/* ── TIME LABELS ──────────────────────────────────────────── */
+.time-label {
+  font-size: 0.68rem; font-weight: 600; letter-spacing: 0.04em;
+  text-transform: uppercase; color: var(--muted);
+  padding: 16px 0 6px;
+  border-top: 0.5px solid var(--border);
+  margin-top: 4px;
+}
+.time-label:first-child { border-top: none; padding-top: 12px; }
 
-  /* SWIPE STAGE PANELS */
-  .stage-panels-wrapper {
-    overflow: hidden;
-    touch-action: pan-y;
-  }
-  .stage-panels {
-    display: flex;
-    transition: transform 0.28s cubic-bezier(0.4,0,0.2,1);
-    will-change: transform;
-  }
-  .stage-panel {
-    flex-shrink: 0;
-    width: 100%;
-    padding: 0 16px;
-  }
+/* ── SESSION CARDS ────────────────────────────────────────── */
+.session-card {
+  background: var(--surface);
+  border-radius: 12px;
+  margin-bottom: 8px;
+  overflow: hidden;
+  box-shadow: var(--card-shadow);
+  border: 0.5px solid var(--border2);
+  transition: box-shadow 0.2s, transform 0.15s;
+  position: relative;
+}
+.session-card:active { transform: scale(0.99); }
 
-  /* STAGE DOTS (mobile indicator) */
-  .stage-dots-bar {
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
-    padding: 8px 0 7px;
-    display: none;
-  }
-  .stage-dots {
-    display: flex;
-    justify-content: center;
-    gap: 8px;
-    align-items: center;
-  }
-  .stage-dot {
-    width: 8px; height: 8px; border-radius: 50%;
-    transition: opacity 0.15s, transform 0.15s;
-    cursor: pointer;
-    opacity: 0.22;
-  }
-  .stage-dot.active { transform: scale(1.4); opacity: 1; }
-  .stage-dot[data-stage="all"]       { background: var(--text); }
-  .stage-dot[data-stage="main"]      { background: var(--stage-main); }
-  .stage-dot[data-stage="community"] { background: var(--stage-community); }
-  .stage-dot[data-stage="pixel"]     { background: var(--stage-pixel); }
-  .stage-dot[data-stage="specials"]  { background: var(--stage-specials); }
-  .stage-dot-label {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em;
-    text-transform: uppercase; color: var(--muted);
-    margin: 0 4px;
-  }
+/* left color bar */
+.session-card::before {
+  content: '';
+  position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+  border-radius: 12px 0 0 12px;
+}
+.stage-main      .session-card::before { background: var(--stage-main); }
+.stage-community .session-card::before { background: var(--stage-community); }
+.stage-pixel     .session-card::before { background: var(--stage-pixel); }
+.stage-specials  .session-card::before { background: var(--stage-specials); }
 
-  @media (max-width: 599px) {
-    .stage-filter { display: none !important; }
-    .stage-dots-bar { display: block; }
-    .stage-panels-wrapper { display: block; }
-    .content { padding: 0 0 80px; }
+.session-card.now-playing {
+  box-shadow: 0 0 0 1.5px var(--accent-dk), var(--card-shadow);
+}
+.session-card.favorited.conflict {
+  box-shadow: 0 0 0 1.5px var(--red), var(--card-shadow);
+}
+
+.card-header {
+  display: flex; align-items: flex-start;
+  padding: 11px 12px 11px 14px; gap: 10px;
+  cursor: pointer; user-select: none;
+}
+.card-main { flex: 1; min-width: 0; }
+.card-meta {
+  display: flex; align-items: center; gap: 6px;
+  margin-bottom: 3px; flex-wrap: wrap;
+}
+.card-time {
+  font-size: 0.7rem; font-weight: 600; color: var(--muted); white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.card-stage-pill {
+  font-size: 0.62rem; font-weight: 600; padding: 1px 7px;
+  border-radius: 100px; white-space: nowrap;
+}
+.stage-main      .card-stage-pill { background: rgba(28,28,30,0.08);  color: var(--stage-main); }
+.stage-community .card-stage-pill { background: rgba(10,132,255,0.1); color: var(--stage-community); }
+.stage-pixel     .card-stage-pill { background: rgba(191,90,242,0.1); color: var(--stage-pixel); }
+.stage-specials  .card-stage-pill { background: rgba(255,159,10,0.1); color: var(--stage-specials); }
+[data-theme="dark"] .stage-main .card-stage-pill { background: rgba(255,255,255,0.12); }
+
+.now-tag {
+  font-size: 0.6rem; font-weight: 700;
+  background: var(--accent); color: #1c1c1e;
+  padding: 1px 7px; border-radius: 100px; animation: blink 2s infinite;
+}
+.card-title {
+  font-size: 0.88rem; font-weight: 600; line-height: 1.35;
+  color: var(--text); letter-spacing: -0.01em;
+}
+.card-actions {
+  display: flex; align-items: center; gap: 4px;
+  flex-shrink: 0; padding-top: 1px;
+}
+.conflict-tag { font-size: 0.9rem; cursor: default; }
+.fav-btn {
+  background: none; border: none; cursor: pointer;
+  font-size: 1rem; padding: 3px; line-height: 1;
+  color: var(--border); transition: color 0.15s, transform 0.15s;
+}
+.fav-btn.active { color: var(--red); }
+.fav-btn:active { transform: scale(1.25); }
+.expand-btn {
+  background: none; border: none; cursor: pointer;
+  width: 22px; height: 22px; border-radius: 50%;
+  background: var(--surface2); color: var(--muted);
+  font-size: 0.65rem; display: flex; align-items: center; justify-content: center;
+  transition: transform 0.2s, background 0.15s; flex-shrink: 0;
+}
+.session-card.expanded .expand-btn { transform: rotate(180deg); }
+
+/* ── CARD DETAILS ─────────────────────────────────────────── */
+.card-details {
+  display: none; padding: 0 14px 12px 14px;
+  border-top: 0.5px solid var(--border);
+}
+.session-card.expanded .card-details { display: block; }
+.card-speaker {
+  font-size: 0.77rem; color: var(--muted); padding-top: 9px; line-height: 1.5;
+}
+.card-speaker strong { color: var(--text2); font-weight: 600; }
+.card-link {
+  display: inline-flex; align-items: center; gap: 5px;
+  margin-top: 9px; font-size: 0.75rem; font-weight: 600;
+  color: var(--stage-community); text-decoration: none;
+  transition: opacity 0.15s;
+}
+.card-link:active { opacity: 0.6; }
+
+/* ── FAVORITES ────────────────────────────────────────────── */
+.fav-empty {
+  text-align: center; padding: 60px 20px;
+  color: var(--muted); font-size: 0.85rem; line-height: 1.7;
+}
+.fav-empty .icon { font-size: 2.5rem; margin-bottom: 10px; display: block; }
+.day-header {
+  font-size: 0.7rem; font-weight: 700; letter-spacing: 0.06em;
+  text-transform: uppercase; color: var(--muted);
+  padding: 18px 0 8px;
+}
+
+/* ── FOOTER ───────────────────────────────────────────────── */
+.footer-note {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  background: var(--header-bg);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  border-top: 0.5px solid var(--border);
+  padding: 8px 16px 10px;
+  font-size: 0.65rem; color: var(--muted); text-align: center;
+}
+.footer-note a { color: var(--stage-community); text-decoration: none; }
+
+/* ── RESPONSIVE ───────────────────────────────────────────── */
+@media (max-width: 599px) {
+  .stage-filter-desktop { display: none !important; }
+  .stage-nav { display: block; }
+}
+@media (min-width: 600px) {
+  .stage-nav { display: none; }
+  .stage-filter-desktop { display: flex; }
+  .stage-panels { display: block !important; transform: none !important; }
+  .stage-panel { width: auto; padding: 0; }
+  .content, header, .stage-nav, .stage-filter-desktop {
+    max-width: 680px; margin-left: auto; margin-right: auto;
   }
-  @media (min-width: 600px) {
-    .stage-dots-bar { display: none; }
-    .stage-panels { display: block !important; transform: none !important; }
-    .stage-panel { width: auto; padding: 0; }
-    .content, header, .stage-filter { max-width: 700px; margin-left: auto; margin-right: auto; }
-    .content { padding-left: 24px; padding-right: 24px; }
-    header { padding-left: 24px; padding-right: 24px; }
-    .stage-filter { padding-left: 24px; padding-right: 24px; }
-  }
+  .stage-panel { padding: 0 24px; }
+  .banner-area { padding: 0 24px; }
+  #fav-view { padding: 0 24px; }
+  header { padding: 0 24px; }
+  .stage-filter-desktop { padding-left: 24px; padding-right: 24px; }
+}
+
+/* ── TRANSITIONS ──────────────────────────────────────────── */
+.session-card, header, .stage-nav, .stage-filter-desktop, .banner-area,
+.content, body { transition: background 0.3s, color 0.3s, border-color 0.3s; }
 </style>
 </head>
 <body>
@@ -359,12 +401,15 @@
   <div class="header-top">
     <div class="logo">
       <span class="logo-leat">LEaT</span>
-      <span class="logo-x">X</span>
-      <span class="logo-year">München '26</span>
+      <span class="logo-x"> X</span>
+      <span class="logo-year">'26</span>
     </div>
-    <div class="live-clock">
-      <span class="live-dot"></span>
-      <span id="clock">--:--</span>
+    <div class="header-right">
+      <div class="live-clock">
+        <span class="live-dot"></span>
+        <span id="clock">--:--</span>
+      </div>
+      <button class="dm-toggle" id="dm-toggle" onclick="toggleDark()" title="Dark Mode">🌙</button>
     </div>
   </div>
   <div class="tabs">
@@ -375,16 +420,16 @@
   </div>
 </header>
 
-<div class="stage-filter" id="stage-filter">
-  <button class="stage-btn active" data-stage="all"       onclick="filterStage('all')">Alle</button>
-  <button class="stage-btn" data-stage="main"      onclick="filterStage('main')">Main Stage</button>
-  <button class="stage-btn" data-stage="community" onclick="filterStage('community')">Community Lab</button>
-  <button class="stage-btn" data-stage="pixel"     onclick="filterStage('pixel')">Pixel Lab</button>
-  <button class="stage-btn" data-stage="specials"  onclick="filterStage('specials')">Specials</button>
-</div>
-
-<!-- Mobile dot indicators -->
-<div class="stage-dots-bar" id="stage-dots-bar">
+<!-- Mobile stage nav with arrows -->
+<div class="stage-nav" id="stage-nav">
+  <div class="stage-nav-inner">
+    <button class="stage-arrow" id="arrow-prev" onclick="stepStage(-1)">‹</button>
+    <div class="stage-label-area">
+      <span class="stage-label-name" id="stage-label-name">Alle Stages</span>
+      <span class="stage-label-sub">← wischen →</span>
+    </div>
+    <button class="stage-arrow" id="arrow-next" onclick="stepStage(1)">›</button>
+  </div>
   <div class="stage-dots">
     <span class="stage-dot active" data-stage="all"       onclick="filterStage('all')"></span>
     <span class="stage-dot"        data-stage="main"      onclick="filterStage('main')"></span>
@@ -394,10 +439,22 @@
   </div>
 </div>
 
+<!-- Desktop pill filter -->
+<div class="stage-filter-desktop" id="stage-filter-desktop">
+  <button class="stage-pill active" data-stage="all"       onclick="filterStage('all')">Alle</button>
+  <button class="stage-pill" data-stage="main"      onclick="filterStage('main')">Main Stage</button>
+  <button class="stage-pill" data-stage="community" onclick="filterStage('community')">Community Lab</button>
+  <button class="stage-pill" data-stage="pixel"     onclick="filterStage('pixel')">Pixel Lab</button>
+  <button class="stage-pill" data-stage="specials"  onclick="filterStage('specials')">Specials</button>
+</div>
+
 <div class="content">
+  <!-- PRE -->
   <div class="day-view" id="day-pre">
-    <div class="now-banner"      id="now-pre" style="margin:12px 16px 0"></div>
-    <div class="conflict-banner" id="conflict-pre" style="margin:6px 16px 0"></div>
+    <div class="banner-area">
+      <div class="now-banner"      id="now-pre"></div>
+      <div class="conflict-banner" id="conflict-pre"></div>
+    </div>
     <div class="stage-panels-wrapper" id="swipe-pre">
       <div class="stage-panels" id="panels-pre">
         <div class="stage-panel" id="panel-pre-all"></div>
@@ -408,9 +465,12 @@
       </div>
     </div>
   </div>
+  <!-- WED -->
   <div class="day-view active" id="day-wed">
-    <div class="now-banner"      id="now-wed" style="margin:12px 16px 0"></div>
-    <div class="conflict-banner" id="conflict-wed" style="margin:6px 16px 0"></div>
+    <div class="banner-area">
+      <div class="now-banner"      id="now-wed"></div>
+      <div class="conflict-banner" id="conflict-wed"></div>
+    </div>
     <div class="stage-panels-wrapper" id="swipe-wed">
       <div class="stage-panels" id="panels-wed">
         <div class="stage-panel" id="panel-wed-all"></div>
@@ -421,9 +481,12 @@
       </div>
     </div>
   </div>
+  <!-- THU -->
   <div class="day-view" id="day-thu">
-    <div class="now-banner"      id="now-thu" style="margin:12px 16px 0"></div>
-    <div class="conflict-banner" id="conflict-thu" style="margin:6px 16px 0"></div>
+    <div class="banner-area">
+      <div class="now-banner"      id="now-thu"></div>
+      <div class="conflict-banner" id="conflict-thu"></div>
+    </div>
     <div class="stage-panels-wrapper" id="swipe-thu">
       <div class="stage-panels" id="panels-thu">
         <div class="stage-panel" id="panel-thu-all"></div>
@@ -434,370 +497,332 @@
       </div>
     </div>
   </div>
+  <!-- FAV -->
   <div id="fav-view">
-    <div class="now-banner"      id="now-fav" style="margin:12px 16px 0"></div>
-    <div class="conflict-banner" id="conflict-fav" style="margin:6px 16px 0"></div>
-    <div id="list-fav" style="padding:0 16px"></div>
+    <div class="now-banner"      id="now-fav" style="margin:10px 0 0"></div>
+    <div class="conflict-banner" id="conflict-fav" style="margin:6px 0 0"></div>
+    <div id="list-fav"></div>
   </div>
 </div>
 
 <div class="footer-note">
-  Programm von <a href="https://www.leatcon.com/leat-x/programm/timetable/" target="_blank">leatcon.com</a> &nbsp;·&nbsp; Stand März 2026
+  Programm von <a href="https://www.leatcon.com/leat-x/programm/timetable/" target="_blank">leatcon.com</a> · Stand März 2026
 </div>
 
 <script>
+// ── DATA ──────────────────────────────────────────────────────────────
 const PROGRAM = {
   pre: {
-    label: "Pre-Event, 03.03.26", date: "2026-03-03",
-    sessions: [
-      { id:"pre-1", title:"Haus7 · Studio Tour @ Bavaria Film", start:"17:00", end:"18:30", stage:"specials",
-        speaker:"Geführte Tour mit Michael Hinreiner (TAB-Audio Engineering) und Detlef Eckert (EXG MEDIA)",
-        url:"https://www.leatcon.com/timetable/event/haus7-studio-tour-bavaria-film/" },
-      { id:"pre-2", title:"SAP Garden Backstage Tour", start:"18:00", end:"19:00", stage:"specials",
-        speaker:"Geführte Tour mit Moritz Lehmann (Redbull München), Martin Kuhn (Ross Video), Marc Lorenz (Ayrton)",
-        url:"https://www.leatcon.com/timetable/event/sap-garden-tour-3-maerz-18-uhr/" }
+    label:"Pre-Event, 03.03.26", date:"2026-03-03",
+    sessions:[
+      {id:"pre-1",title:"Haus7 · Studio Tour @ Bavaria Film",start:"17:00",end:"18:30",stage:"specials",speaker:"Geführte Tour mit Michael Hinreiner (TAB-Audio Engineering) und Detlef Eckert (EXG MEDIA)",url:"https://www.leatcon.com/timetable/event/haus7-studio-tour-bavaria-film/"},
+      {id:"pre-2",title:"SAP Garden Backstage Tour",start:"18:00",end:"19:00",stage:"specials",speaker:"Geführte Tour mit Moritz Lehmann (Redbull München), Martin Kuhn (Ross Video), Marc Lorenz (Ayrton)",url:"https://www.leatcon.com/timetable/event/sap-garden-tour-3-maerz-18-uhr/"}
     ]
   },
   wed: {
-    label: "Mittwoch, 04.03.26", date: "2026-03-04",
-    sessions: [
-      { id:"w1",  title:"Wireless Audio für jede Location – SOWA im Praxiseinsatz", start:"11:00", end:"11:30", stage:"main", speaker:"Andreas Hench, United B", url:"https://www.leatcon.com/timetable/event/wireless-audio-fuer-jede-location-sowa-im-praxiseinsatz/" },
-      { id:"w2",  title:"Selbstständig organisiert: Mit Lexware, sevdesk & Co.", start:"11:00", end:"12:00", stage:"community", speaker:"Workshop | Karin Zweigler (ISDV)", url:"https://www.leatcon.com/timetable/event/selbstorganisation-mit-lexware-sevdesk-buhabut-von-beauftragung-ueber-buchhaltung-bis-erechnung/" },
-      { id:"w3",  title:"Hive & GreenHippo", start:"11:00", end:"11:45", stage:"pixel", speaker:"Daniel Frigger, Cast", url:"https://www.leatcon.com/timetable/event/hive-greenhippo/" },
-      { id:"w4",  title:"Lehrplan vs. Wirklichkeit: Verantwortung übernehmen", start:"11:45", end:"12:15", stage:"main", speaker:"Panel: Michael Lindner (IHK Akademie München), Casi Will (CrewCall), Kai Grumpe (Friedrich-Ebert-Schule Wiesbaden)", url:"https://www.leatcon.com/timetable/event/stand-der-meisterausbildung/" },
-      { id:"w5",  title:"SP Grid: Stop Programming Cues. Start Programming Behavior.", start:"12:00", end:"12:45", stage:"pixel", speaker:"Philip Neyses, Stage Precision", url:"https://www.leatcon.com/timetable/event/sp-grid/" },
-      { id:"w6",  title:"Sound Devices: Drahtloses Audio auf Engineering-Level", start:"12:30", end:"13:00", stage:"main", speaker:"Thomas Conen, United B", url:"https://www.leatcon.com/timetable/event/sound-devices-drahtloses-audio-auf-engineering-level/" },
-      { id:"w7",  title:"Wie komm ich zu Neukunden? Die richtigen Worte, um ins Gespräch zu kommen", start:"12:30", end:"13:30", stage:"community", speaker:"Workshop | Thomas Adt", url:"https://www.leatcon.com/timetable/event/wie-komm-ich-zu-neukunden-die-richtigen-worte-um-ins-gespraech-zu-kommen/" },
-      { id:"w8",  title:"Ross Vertex", start:"13:00", end:"13:45", stage:"pixel", speaker:"Martin Kuhn, Ross Video", url:"https://www.leatcon.com/timetable/event/ross-vertex/" },
-      { id:"w9",  title:"TRUE 1 – A new Generation of Data Connectors", start:"13:15", end:"13:45", stage:"main", speaker:"Pascal Hetzenauer, Neutrik EMEA GmbH", url:"https://www.leatcon.com/timetable/event/new-generation-of-data-connectors/" },
-      { id:"w10", title:"MILAN – Status, Praxis & Perspektiven", start:"14:00", end:"14:30", stage:"main", speaker:"Fabian Braun", url:"https://www.leatcon.com/timetable/event/milan-status-praxis-perspektiven-2/" },
-      { id:"w11", title:"Redundante Playback-Systeme mit DAD – Praxis, Workflows & Best Practices", start:"14:00", end:"15:00", stage:"community", speaker:"Workshop | Asger Krog, hosted by en:able", url:"https://www.leatcon.com/timetable/event/redundante-playback-systeme-mit-dad-praxis-workflows-best-practices/" },
-      { id:"w12", title:"Hive & GreenHippo", start:"14:15", end:"15:00", stage:"pixel", speaker:"Daniel Frigger, Cast", url:"https://www.leatcon.com/timetable/event/hive-greenhippo/" },
-      { id:"w13", title:"Motorworld Tour: Ein Blick hinter die Kulissen der Automobilgeschichte", start:"14:00", end:"15:00", stage:"specials", speaker:"Side Event", url:"https://www.leatcon.com/timetable/event/motorworld-tour-ein-blick-hinter-die-kulissen-der-automobilgeschichte/" },
-      { id:"w14", title:"Konvergenz im Netzwerk: Wie IT und Medientechnik zu einer Infrastruktur zusammenwachsen", start:"14:45", end:"15:15", stage:"main", speaker:"Marco Pfiffer, Primation / EXG Media", url:"https://www.leatcon.com/timetable/event/tba/" },
-      { id:"w15", title:"Cheers to 5 Years", start:"15:00", end:"16:00", stage:"specials", speaker:"Jubiläums-Aktion", url:"https://www.leatcon.com/timetable/event/cheers-to-5-years/" },
-      { id:"w16", title:"SP Grid: Stop Programming Cues. Start Programming Behavior.", start:"15:15", end:"16:00", stage:"pixel", speaker:"Philip Neyses, Stage Precision", url:"https://www.leatcon.com/timetable/event/sp-grid/" },
-      { id:"w17", title:"Touring-taugliche Show-Programmierung mit ChamSys", start:"15:30", end:"16:00", stage:"main", speaker:"Frank Alofs, ChamSys Deutschland", url:"https://www.leatcon.com/timetable/event/mediamaster-professionelle-video-workflows-fuer-lichttechniker-integration-praxis/" },
-      { id:"w18", title:"Future Forward: Wie du dein Team auf die KI-Reise mitnimmst", start:"15:30", end:"16:30", stage:"community", speaker:"Workshop | Marcel Courth", url:"https://www.leatcon.com/timetable/event/future-forward-wie-du-dein-team-auf-die-ki-reise-mitnimmst/" },
-      { id:"w19", title:"Funkfrequenzen für PMSE", start:"16:15", end:"16:45", stage:"main", speaker:"Prof. Dr.-Ing. Georg Fischer – FAU Erlangen-Nürnberg – powered by VPLT", url:"https://www.leatcon.com/timetable/event/tba-2/" },
-      { id:"w20", title:"Ross Vertex", start:"16:15", end:"17:00", stage:"pixel", speaker:"Martin Kuhn, Ross Video", url:"https://www.leatcon.com/timetable/event/ross-vertex/" },
-      { id:"w21", title:"Volles Spektrum? Smarte Audioübertragung im Frequenzdschungel", start:"17:00", end:"17:30", stage:"main", speaker:"Sascha Helmstaedt, Shure", url:"https://www.leatcon.com/timetable/event/tba-5/" },
-      { id:"w22", title:"Beyond Borders: The Growing Importance of European Alliances in Event Technology", start:"17:00", end:"18:00", stage:"community", speaker:"Community Talk powered by VPLT – Jürgen Junker, Silke Lalvani, Jean-Marie Le Guen, Peter Heath & Phoebe Currie (PLASA)", url:"https://www.leatcon.com/timetable/event/beyond-borders-the-growing-importance-of-european-alliances-in-event-technology/" },
-      { id:"w23", title:"Auracast – der Gamechanger für Hörunterstützung", start:"17:30", end:"18:00", stage:"main", speaker:"Volker Holtmeyer, Audio Pro Heilbronn", url:"https://www.leatcon.com/timetable/event/backstage-brain-battle/" },
-      { id:"w24", title:"LEaT X Open Doors Networking", start:"18:00", end:"21:00", stage:"specials", speaker:"Open fridges. Open minds. Real connections.", url:"https://www.leatcon.com/timetable/event/leat-x-open-doors/" }
+    label:"Mittwoch, 04.03.26", date:"2026-03-04",
+    sessions:[
+      {id:"w1",title:"Wireless Audio für jede Location – SOWA im Praxiseinsatz",start:"11:00",end:"11:30",stage:"main",speaker:"Andreas Hench, United B",url:"https://www.leatcon.com/timetable/event/wireless-audio-fuer-jede-location-sowa-im-praxiseinsatz/"},
+      {id:"w2",title:"Selbstständig organisiert: Mit Lexware, sevdesk & Co.",start:"11:00",end:"12:00",stage:"community",speaker:"Workshop | Karin Zweigler (ISDV)",url:"https://www.leatcon.com/timetable/event/selbstorganisation-mit-lexware-sevdesk-buhabut-von-beauftragung-ueber-buchhaltung-bis-erechnung/"},
+      {id:"w3",title:"Hive & GreenHippo",start:"11:00",end:"11:45",stage:"pixel",speaker:"Daniel Frigger, Cast",url:"https://www.leatcon.com/timetable/event/hive-greenhippo/"},
+      {id:"w4",title:"Lehrplan vs. Wirklichkeit: Verantwortung übernehmen",start:"11:45",end:"12:15",stage:"main",speaker:"Panel: Michael Lindner (IHK Akademie München), Casi Will (CrewCall), Kai Grumpe (Friedrich-Ebert-Schule Wiesbaden)",url:"https://www.leatcon.com/timetable/event/stand-der-meisterausbildung/"},
+      {id:"w5",title:"SP Grid: Stop Programming Cues. Start Programming Behavior.",start:"12:00",end:"12:45",stage:"pixel",speaker:"Philip Neyses, Stage Precision",url:"https://www.leatcon.com/timetable/event/sp-grid/"},
+      {id:"w6",title:"Sound Devices: Drahtloses Audio auf Engineering-Level",start:"12:30",end:"13:00",stage:"main",speaker:"Thomas Conen, United B",url:"https://www.leatcon.com/timetable/event/sound-devices-drahtloses-audio-auf-engineering-level/"},
+      {id:"w7",title:"Wie komm ich zu Neukunden? Die richtigen Worte, um ins Gespräch zu kommen",start:"12:30",end:"13:30",stage:"community",speaker:"Workshop | Thomas Adt",url:"https://www.leatcon.com/timetable/event/wie-komm-ich-zu-neukunden-die-richtigen-worte-um-ins-gespraech-zu-kommen/"},
+      {id:"w8",title:"Ross Vertex",start:"13:00",end:"13:45",stage:"pixel",speaker:"Martin Kuhn, Ross Video",url:"https://www.leatcon.com/timetable/event/ross-vertex/"},
+      {id:"w9",title:"TRUE 1 – A new Generation of Data Connectors",start:"13:15",end:"13:45",stage:"main",speaker:"Pascal Hetzenauer, Neutrik EMEA GmbH",url:"https://www.leatcon.com/timetable/event/new-generation-of-data-connectors/"},
+      {id:"w10",title:"MILAN – Status, Praxis & Perspektiven",start:"14:00",end:"14:30",stage:"main",speaker:"Fabian Braun",url:"https://www.leatcon.com/timetable/event/milan-status-praxis-perspektiven-2/"},
+      {id:"w11",title:"Redundante Playback-Systeme mit DAD – Praxis, Workflows & Best Practices",start:"14:00",end:"15:00",stage:"community",speaker:"Workshop | Asger Krog, hosted by en:able",url:"https://www.leatcon.com/timetable/event/redundante-playback-systeme-mit-dad-praxis-workflows-best-practices/"},
+      {id:"w12",title:"Hive & GreenHippo",start:"14:15",end:"15:00",stage:"pixel",speaker:"Daniel Frigger, Cast",url:"https://www.leatcon.com/timetable/event/hive-greenhippo/"},
+      {id:"w13",title:"Motorworld Tour: Ein Blick hinter die Kulissen der Automobilgeschichte",start:"14:00",end:"15:00",stage:"specials",speaker:"Side Event",url:"https://www.leatcon.com/timetable/event/motorworld-tour-ein-blick-hinter-die-kulissen-der-automobilgeschichte/"},
+      {id:"w14",title:"Konvergenz im Netzwerk: Wie IT und Medientechnik zu einer Infrastruktur zusammenwachsen",start:"14:45",end:"15:15",stage:"main",speaker:"Marco Pfiffer, Primation / EXG Media",url:"https://www.leatcon.com/timetable/event/tba/"},
+      {id:"w15",title:"Cheers to 5 Years",start:"15:00",end:"16:00",stage:"specials",speaker:"Jubiläums-Aktion",url:"https://www.leatcon.com/timetable/event/cheers-to-5-years/"},
+      {id:"w16",title:"SP Grid: Stop Programming Cues. Start Programming Behavior.",start:"15:15",end:"16:00",stage:"pixel",speaker:"Philip Neyses, Stage Precision",url:"https://www.leatcon.com/timetable/event/sp-grid/"},
+      {id:"w17",title:"Touring-taugliche Show-Programmierung mit ChamSys",start:"15:30",end:"16:00",stage:"main",speaker:"Frank Alofs, ChamSys Deutschland",url:"https://www.leatcon.com/timetable/event/mediamaster-professionelle-video-workflows-fuer-lichttechniker-integration-praxis/"},
+      {id:"w18",title:"Future Forward: Wie du dein Team auf die KI-Reise mitnimmst",start:"15:30",end:"16:30",stage:"community",speaker:"Workshop | Marcel Courth",url:"https://www.leatcon.com/timetable/event/future-forward-wie-du-dein-team-auf-die-ki-reise-mitnimmst/"},
+      {id:"w19",title:"Funkfrequenzen für PMSE",start:"16:15",end:"16:45",stage:"main",speaker:"Prof. Dr.-Ing. Georg Fischer – FAU Erlangen-Nürnberg – powered by VPLT",url:"https://www.leatcon.com/timetable/event/tba-2/"},
+      {id:"w20",title:"Ross Vertex",start:"16:15",end:"17:00",stage:"pixel",speaker:"Martin Kuhn, Ross Video",url:"https://www.leatcon.com/timetable/event/ross-vertex/"},
+      {id:"w21",title:"Volles Spektrum? Smarte Audioübertragung im Frequenzdschungel",start:"17:00",end:"17:30",stage:"main",speaker:"Sascha Helmstaedt, Shure",url:"https://www.leatcon.com/timetable/event/tba-5/"},
+      {id:"w22",title:"Beyond Borders: The Growing Importance of European Alliances in Event Technology",start:"17:00",end:"18:00",stage:"community",speaker:"Community Talk powered by VPLT – Jürgen Junker, Silke Lalvani, Jean-Marie Le Guen, Peter Heath & Phoebe Currie (PLASA)",url:"https://www.leatcon.com/timetable/event/beyond-borders-the-growing-importance-of-european-alliances-in-event-technology/"},
+      {id:"w23",title:"Auracast – der Gamechanger für Hörunterstützung",start:"17:30",end:"18:00",stage:"main",speaker:"Volker Holtmeyer, Audio Pro Heilbronn",url:"https://www.leatcon.com/timetable/event/backstage-brain-battle/"},
+      {id:"w24",title:"LEaT X Open Doors Networking",start:"18:00",end:"21:00",stage:"specials",speaker:"Open fridges. Open minds. Real connections.",url:"https://www.leatcon.com/timetable/event/leat-x-open-doors/"}
     ]
   },
   thu: {
-    label: "Donnerstag, 05.03.26", date: "2026-03-05",
-    sessions: [
-      { id:"t1",  title:"Networked Audio made easy – Dante am Beispiel des Yamaha Ökosystems", start:"11:00", end:"11:30", stage:"main", speaker:"Holger Wiesenberg (Audinate) und Ruben van der Goor (Yamaha)", url:"https://www.leatcon.com/timetable/event/yamaha-dante/" },
-      { id:"t2",  title:"Kommunikation, die Brücken baut: Konflikte klug meistern", start:"11:00", end:"12:00", stage:"community", speaker:"Workshop | Nik Gledic", url:"https://www.leatcon.com/timetable/event/kommunikation-die-bruecken-baut-konflikte-klug-meistern-ob-mit-kunden-im-team-oder-als-fuehrungskraft/" },
-      { id:"t3",  title:"Ross Vertex", start:"11:00", end:"11:45", stage:"pixel", speaker:"Daniel Kuhn, Ross Video", url:"https://www.leatcon.com/timetable/event/tba-8/" },
-      { id:"t4",  title:"Sicher beauftragen und beauftragt werden: Strategien, Konzepte und No-Gos", start:"11:45", end:"12:15", stage:"main", speaker:"Marcus Pohl & Marc Stähly, ISDV", url:"https://www.leatcon.com/timetable/event/sicher-beauftragen-und-beauftragt-werden-strategien-konzepte-und-no-gos/" },
-      { id:"t5",  title:"SP Grid: Stop Programming Cues. Start Programming Behavior.", start:"12:00", end:"12:45", stage:"pixel", speaker:"Philip Neyses, Stage Precision", url:"https://www.leatcon.com/timetable/event/tba-11/" },
-      { id:"t6",  title:"Spatial Audio mit Wellenfeldsynthese: Kreative Klangräume für Live & Installation", start:"12:30", end:"13:00", stage:"main", speaker:"Sebastian Oeynhausen, Pan Acoustics", url:"https://www.leatcon.com/timetable/event/spatial-audio-mit-wellenfeldsynthese-kreative-klangraeume-fuer-live-installation/" },
-      { id:"t7",  title:"Stromverteilungen und Erdungssysteme bei Veranstaltungen", start:"12:30", end:"13:30", stage:"community", speaker:"Workshop | Fabian Nafziger, Neutrik EMEA GmbH", url:"https://www.leatcon.com/timetable/event/stromverteilung/" },
-      { id:"t8",  title:"Cheers to 5 Years", start:"13:00", end:"14:00", stage:"specials", speaker:"Jubiläums-Aktion", url:"https://www.leatcon.com/timetable/event/cheers-to-5-years-2/" },
-      { id:"t9",  title:"Hive & GreenHippo", start:"13:30", end:"14:15", stage:"pixel", speaker:"Daniel Frigger, Cast", url:"https://www.leatcon.com/timetable/event/hive-greenhippo-2/" },
-      { id:"t10", title:"Hör auf zu verkaufen – fang an Menschen zu verstehen!", start:"14:00", end:"14:30", stage:"main", speaker:"Nik Gledic", url:"https://www.leatcon.com/timetable/event/kommunikation-die-bruecken-baut-konflikte-klug-meistern/" },
-      { id:"t11", title:"Offene Unternehmensberatung mit dem ISDV e.V.", start:"14:00", end:"15:00", stage:"community", speaker:"Marcus Pohl & Marc Stähly", url:"https://www.leatcon.com/timetable/event/ki-in-der-praxis-prozessautomatisierung-2/" },
-      { id:"t12", title:"Motorworld Tour: Ein Blick hinter die Kulissen der Automobilgeschichte", start:"14:00", end:"15:00", stage:"specials", speaker:"Geführte Tour", url:"https://www.leatcon.com/timetable/event/motorworld-tour-ein-blick-hinter-die-kulissen-der-automobilgeschichte-2/" },
-      { id:"t13", title:"Immersive Walking Acts", start:"14:45", end:"15:15", stage:"main", speaker:"Marius Kuschmierz (Holocircle), Eye Systems, Andreas 'Andy' Bauer (AJ Designs)", url:"https://www.leatcon.com/timetable/event/tba-4/" }
+    label:"Donnerstag, 05.03.26", date:"2026-03-05",
+    sessions:[
+      {id:"t1",title:"Networked Audio made easy – Dante am Beispiel des Yamaha Ökosystems",start:"11:00",end:"11:30",stage:"main",speaker:"Holger Wiesenberg (Audinate) und Ruben van der Goor (Yamaha)",url:"https://www.leatcon.com/timetable/event/yamaha-dante/"},
+      {id:"t2",title:"Kommunikation, die Brücken baut: Konflikte klug meistern",start:"11:00",end:"12:00",stage:"community",speaker:"Workshop | Nik Gledic",url:"https://www.leatcon.com/timetable/event/kommunikation-die-bruecken-baut-konflikte-klug-meistern-ob-mit-kunden-im-team-oder-als-fuehrungskraft/"},
+      {id:"t3",title:"Ross Vertex",start:"11:00",end:"11:45",stage:"pixel",speaker:"Daniel Kuhn, Ross Video",url:"https://www.leatcon.com/timetable/event/tba-8/"},
+      {id:"t4",title:"Sicher beauftragen und beauftragt werden: Strategien, Konzepte und No-Gos",start:"11:45",end:"12:15",stage:"main",speaker:"Marcus Pohl & Marc Stähly, ISDV",url:"https://www.leatcon.com/timetable/event/sicher-beauftragen-und-beauftragt-werden-strategien-konzepte-und-no-gos/"},
+      {id:"t5",title:"SP Grid: Stop Programming Cues. Start Programming Behavior.",start:"12:00",end:"12:45",stage:"pixel",speaker:"Philip Neyses, Stage Precision",url:"https://www.leatcon.com/timetable/event/tba-11/"},
+      {id:"t6",title:"Spatial Audio mit Wellenfeldsynthese: Kreative Klangräume für Live & Installation",start:"12:30",end:"13:00",stage:"main",speaker:"Sebastian Oeynhausen, Pan Acoustics",url:"https://www.leatcon.com/timetable/event/spatial-audio-mit-wellenfeldsynthese-kreative-klangraeume-fuer-live-installation/"},
+      {id:"t7",title:"Stromverteilungen und Erdungssysteme bei Veranstaltungen",start:"12:30",end:"13:30",stage:"community",speaker:"Workshop | Fabian Nafziger, Neutrik EMEA GmbH",url:"https://www.leatcon.com/timetable/event/stromverteilung/"},
+      {id:"t8",title:"Cheers to 5 Years",start:"13:00",end:"14:00",stage:"specials",speaker:"Jubiläums-Aktion",url:"https://www.leatcon.com/timetable/event/cheers-to-5-years-2/"},
+      {id:"t9",title:"Hive & GreenHippo",start:"13:30",end:"14:15",stage:"pixel",speaker:"Daniel Frigger, Cast",url:"https://www.leatcon.com/timetable/event/hive-greenhippo-2/"},
+      {id:"t10",title:"Hör auf zu verkaufen – fang an Menschen zu verstehen!",start:"14:00",end:"14:30",stage:"main",speaker:"Nik Gledic",url:"https://www.leatcon.com/timetable/event/kommunikation-die-bruecken-baut-konflikte-klug-meistern/"},
+      {id:"t11",title:"Offene Unternehmensberatung mit dem ISDV e.V.",start:"14:00",end:"15:00",stage:"community",speaker:"Marcus Pohl & Marc Stähly",url:"https://www.leatcon.com/timetable/event/ki-in-der-praxis-prozessautomatisierung-2/"},
+      {id:"t12",title:"Motorworld Tour: Ein Blick hinter die Kulissen der Automobilgeschichte",start:"14:00",end:"15:00",stage:"specials",speaker:"Geführte Tour",url:"https://www.leatcon.com/timetable/event/motorworld-tour-ein-blick-hinter-die-kulissen-der-automobilgeschichte-2/"},
+      {id:"t13",title:"Immersive Walking Acts",start:"14:45",end:"15:15",stage:"main",speaker:"Marius Kuschmierz (Holocircle), Eye Systems, Andreas 'Andy' Bauer (AJ Designs)",url:"https://www.leatcon.com/timetable/event/tba-4/"}
     ]
   }
 };
 
-const STAGE_LABELS = { main:"Main Stage", community:"Community Lab", pixel:"Pixel Lab", specials:"Specials" };
+const STAGE_ORDER  = ['all','main','community','pixel','specials'];
+const STAGE_LABELS = {all:'Alle Stages', main:'Main Stage', community:'Community Lab', pixel:'Pixel Lab', specials:'Specials'};
+const STAGE_COLORS = {all:'var(--text)',main:'var(--stage-main)',community:'var(--stage-community)',pixel:'var(--stage-pixel)',specials:'var(--stage-specials)'};
+
 let currentDay   = 'wed';
 let currentStage = 'all';
 let favorites    = JSON.parse(localStorage.getItem('leat-favs') || '[]');
+let darkMode     = localStorage.getItem('leat-dark') === 'true';
 
-function toMin(t) { const [h,m] = t.split(':').map(Number); return h*60+m; }
-function overlaps(a,b) { return toMin(a.start) < toMin(b.end) && toMin(b.start) < toMin(a.end); }
+// ── DARK MODE ─────────────────────────────────────────────────────────
+function applyDark() {
+  document.documentElement.setAttribute('data-theme', darkMode ? 'dark' : 'light');
+  document.getElementById('dm-toggle').textContent = darkMode ? '☀️' : '🌙';
+}
+function toggleDark() {
+  darkMode = !darkMode;
+  localStorage.setItem('leat-dark', darkMode);
+  applyDark();
+}
+applyDark();
 
+// ── TIME UTILS ────────────────────────────────────────────────────────
+function toMin(t) { const [h,m]=t.split(':').map(Number); return h*60+m; }
+function overlaps(a,b) { return toMin(a.start)<toMin(b.end) && toMin(b.start)<toMin(a.end); }
+function isNowPlaying(s, dk) {
+  const now=new Date(), d=PROGRAM[dk]?.date; if(!d) return false;
+  const [y,mo,dy]=d.split('-').map(Number);
+  if(now.getFullYear()!==y||now.getMonth()+1!==mo||now.getDate()!==dy) return false;
+  const nm=now.getHours()*60+now.getMinutes();
+  return nm>=toMin(s.start)&&nm<toMin(s.end);
+}
 function getConflicts() {
-  const conflicts = new Set();
-  ['pre','wed','thu'].forEach(dk => {
-    const favs = PROGRAM[dk].sessions.filter(s => favorites.includes(s.id));
-    favs.forEach((a,i) => favs.forEach((b,j) => {
-      if (i !== j && overlaps(a,b)) { conflicts.add(a.id); conflicts.add(b.id); }
-    }));
+  const c=new Set();
+  ['pre','wed','thu'].forEach(dk=>{
+    const f=PROGRAM[dk].sessions.filter(s=>favorites.includes(s.id));
+    f.forEach((a,i)=>f.forEach((b,j)=>{ if(i!==j&&overlaps(a,b)){c.add(a.id);c.add(b.id);} }));
   });
-  return conflicts;
+  return c;
 }
 
-function isNowPlaying(session, dayKey) {
-  const now = new Date();
-  const d = PROGRAM[dayKey]?.date;
-  if (!d) return false;
-  const [y,mo,dy] = d.split('-').map(Number);
-  if (now.getFullYear()!==y || now.getMonth()+1!==mo || now.getDate()!==dy) return false;
-  const nowMin = now.getHours()*60 + now.getMinutes();
-  return nowMin >= toMin(session.start) && nowMin < toMin(session.end);
-}
-
-function renderCard(session, dayKey, conflictSet) {
-  const isFav = favorites.includes(session.id);
-  const isNow = isNowPlaying(session, dayKey);
-  const isConflict = isFav && conflictSet.has(session.id);
-  return `
-<div class="session-wrap stage-${session.stage}">
-  <div class="session-card ${isNow?'now-playing':''} ${isFav?'favorited':''} ${isConflict?'conflict':''}" id="card-${session.id}">
-    <div class="card-header" onclick="toggleCard('${session.id}')">
+// ── RENDER ────────────────────────────────────────────────────────────
+function renderCard(s, dk, cs) {
+  const isFav=favorites.includes(s.id), isNow=isNowPlaying(s,dk), isConflict=isFav&&cs.has(s.id);
+  return `<div class="session-wrap stage-${s.stage}">
+  <div class="session-card${isNow?' now-playing':''}${isFav?' favorited':''}${isConflict?' conflict':''}" id="card-${s.id}">
+    <div class="card-header" onclick="toggleCard('${s.id}')">
       <div class="card-main">
         <div class="card-meta">
-          <span class="card-time">${session.start}–${session.end}</span>
-          <span class="card-stage-label">${STAGE_LABELS[session.stage]}</span>
-          ${isNow ? '<span class="now-tag">LÄUFT</span>' : ''}
+          <span class="card-time">${s.start}–${s.end}</span>
+          <span class="card-stage-pill">${STAGE_LABELS[s.stage]}</span>
+          ${isNow?'<span class="now-tag">LÄUFT</span>':''}
         </div>
-        <div class="card-title">${session.title}</div>
+        <div class="card-title">${s.title}</div>
       </div>
       <div class="card-actions">
-        ${isConflict ? '<span class="conflict-tag" title="Zeitkonflikt mit anderem Favoriten">⚡</span>' : ''}
-        <button class="fav-btn ${isFav?'active':''}" onclick="toggleFav(event,'${session.id}')" title="Favorit">♥</button>
+        ${isConflict?'<span class="conflict-tag" title="Zeitkonflikt">⚡</span>':''}
+        <button class="fav-btn${isFav?' active':''}" onclick="toggleFav(event,'${s.id}')" title="Favorit">♥</button>
         <button class="expand-btn">▾</button>
       </div>
     </div>
     <div class="card-details">
-      <div class="card-speaker"><strong>Speaker / Info:</strong><br>${session.speaker}</div>
-      <a class="card-link" href="${session.url}" target="_blank">Details → leatcon.com</a>
+      <div class="card-speaker"><strong>Speaker:</strong><br>${s.speaker}</div>
+      <a class="card-link" href="${s.url}" target="_blank">Details auf leatcon.com →</a>
     </div>
   </div>
 </div>`;
 }
 
-function renderDay(dayKey) {
-  const data = PROGRAM[dayKey];
-  if (!data) return '';
-  const cs = getConflicts();
-  let sessions = data.sessions;
-  if (currentStage !== 'all') sessions = sessions.filter(s => s.stage === currentStage);
-  if (!sessions.length) return '<div style="padding:30px 0;color:var(--muted);font-size:0.82rem;">Keine Sessions für diese Stage.</div>';
-  const groups = {};
-  sessions.forEach(s => { (groups[s.start]=groups[s.start]||[]).push(s); });
-  return Object.keys(groups).sort().map(t =>
-    `<div class="time-label">${t} Uhr</div>` + groups[t].map(s => renderCard(s, dayKey, cs)).join('')
+function renderDayForStage(dk, stage) {
+  const data=PROGRAM[dk]; if(!data) return '';
+  const cs=getConflicts();
+  let sessions=data.sessions;
+  if(stage!=='all') sessions=sessions.filter(s=>s.stage===stage);
+  if(!sessions.length) return `<div style="padding:30px 0 10px;color:var(--muted);font-size:0.82rem;text-align:center;">Keine Sessions für diese Stage.</div>`;
+  const groups={};
+  sessions.forEach(s=>{ (groups[s.start]=groups[s.start]||[]).push(s); });
+  return Object.keys(groups).sort().map(t=>
+    `<div class="time-label">${t} Uhr</div>`+groups[t].map(s=>renderCard(s,dk,cs)).join('')
   ).join('');
 }
 
 function renderFavs() {
-  if (!favorites.length) return `<div class="fav-empty"><span class="icon">♥</span>Noch keine Favoriten gespeichert.<br>Tippe auf ♥ bei einem Programmpunkt.</div>`;
-  const cs = getConflicts();
-  let html = '';
-  ['pre','wed','thu'].forEach(dk => {
-    const items = PROGRAM[dk].sessions.filter(s => favorites.includes(s.id));
-    if (!items.length) return;
-    html += `<div class="day-header">${PROGRAM[dk].label}</div>`;
-    items.sort((a,b) => a.start.localeCompare(b.start)).forEach(s => { html += renderCard(s, dk, cs); });
+  if(!favorites.length) return `<div class="fav-empty"><span class="icon">♥</span>Noch keine Favoriten.<br>Tippe auf ♥ bei einem Programmpunkt.</div>`;
+  const cs=getConflicts();
+  let html='';
+  ['pre','wed','thu'].forEach(dk=>{
+    const items=PROGRAM[dk].sessions.filter(s=>favorites.includes(s.id));
+    if(!items.length) return;
+    html+=`<div class="day-header">${PROGRAM[dk].label}</div>`;
+    items.sort((a,b)=>a.start.localeCompare(b.start)).forEach(s=>{html+=renderCard(s,dk,cs);});
   });
   return html;
 }
 
-function updateNowBanners() {
-  ['pre','wed','thu'].forEach(dk => {
-    const cur = PROGRAM[dk].sessions.filter(s => isNowPlaying(s, dk));
-    const el = document.getElementById('now-'+dk);
-    if (cur.length) {
-      el.innerHTML = `<span>▶</span><span><strong>Gerade läuft:</strong> ${cur.map(s=>s.title).join(' · ')}</span>`;
-      el.classList.add('visible');
-    } else { el.classList.remove('visible'); }
-  });
-  const now = new Date();
-  const pad = n => String(n).padStart(2,'0');
-  const todayStr = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}`;
-  const todayKey = Object.keys(PROGRAM).find(k => PROGRAM[k]?.date === todayStr);
-  const favNow = document.getElementById('now-fav');
-  if (todayKey) {
-    const cur = PROGRAM[todayKey].sessions.filter(s => isNowPlaying(s, todayKey) && favorites.includes(s.id));
-    if (cur.length) {
-      favNow.innerHTML = `<span>▶</span><span><strong>Dein Favorit läuft jetzt:</strong> ${cur.map(s=>s.title).join(' · ')}</span>`;
-      favNow.classList.add('visible');
-    } else { favNow.classList.remove('visible'); }
-  }
-}
-
-function getConflictPairs(dayKey) {
-  const favs = PROGRAM[dayKey].sessions.filter(s => favorites.includes(s.id));
-  const pairs = []; const seen = new Set();
-  favs.forEach((a,i) => favs.forEach((b,j) => {
-    if (i < j && overlaps(a,b)) {
-      const key = [a.id,b.id].sort().join('|');
-      if (!seen.has(key)) { seen.add(key); pairs.push([a,b]); }
-    }
-  }));
-  return pairs;
-}
-
-function updateConflictBanners() {
-  ['pre','wed','thu'].forEach(dk => {
-    const el = document.getElementById('conflict-'+dk);
-    const pairs = getConflictPairs(dk);
-    if (pairs.length) {
-      const msg = pairs.map(([a,b]) => `<strong>${a.title}</strong> (${a.start}) und <strong>${b.title}</strong> (${b.start})`).join('<br>');
-      el.innerHTML = `<span class="conflict-icon">⚡</span><span><strong>Zeitkonflikt in deinen Favoriten:</strong><br>${msg}</span>`;
-      el.classList.add('visible');
-    } else { el.classList.remove('visible'); }
-  });
-
-  // Fav view: all days
-  const el = document.getElementById('conflict-fav');
-  const allPairs = []; const seen = new Set();
-  ['pre','wed','thu'].forEach(dk => {
-    getConflictPairs(dk).forEach(pair => {
-      const key = pair.map(s=>s.id).sort().join('|');
-      if (!seen.has(key)) { seen.add(key); allPairs.push(pair); }
-    });
-  });
-  if (allPairs.length) {
-    const msg = allPairs.map(([a,b]) => `<strong>${a.title}</strong> (${a.start}) und <strong>${b.title}</strong> (${b.start})`).join('<br>');
-    el.innerHTML = `<span class="conflict-icon">⚡</span><span><strong>${allPairs.length === 1 ? '1 Zeitkonflikt' : allPairs.length+' Zeitkonflikte'}:</strong><br>${msg}</span>`;
-    el.classList.add('visible');
-  } else { el.classList.remove('visible'); }
-}
-
-function updateFavCount() {
-  const b = document.getElementById('fav-count');
-  if (favorites.length) { b.textContent = favorites.length; b.style.display = 'inline-block'; }
-  else { b.style.display = 'none'; }
-}
-
-const STAGE_ORDER = ['all','main','community','pixel','specials'];
-
 function renderAll() {
-  ['pre','wed','thu'].forEach(dk => {
-    STAGE_ORDER.forEach(stage => {
-      const el = document.getElementById('panel-'+dk+'-'+stage);
-      if (!el) return;
-      // temporarily set filter to render each panel
-      const saved = currentStage;
-      currentStage = stage;
-      el.innerHTML = renderDay(dk);
-      currentStage = saved;
+  ['pre','wed','thu'].forEach(dk=>{
+    STAGE_ORDER.forEach(stage=>{
+      const el=document.getElementById('panel-'+dk+'-'+stage);
+      if(el) el.innerHTML=renderDayForStage(dk,stage);
     });
   });
-  document.getElementById('list-fav').innerHTML = renderFavs();
+  document.getElementById('list-fav').innerHTML=renderFavs();
   updateNowBanners();
   updateConflictBanners();
   updateFavCount();
-  updateSwipePosition();
+  updateStageUI();
 }
 
-function updateSwipePosition() {
-  const idx = STAGE_ORDER.indexOf(currentStage);
-  ['pre','wed','thu'].forEach(dk => {
-    const panels = document.getElementById('panels-'+dk);
-    if (panels) panels.style.transform = 'translateX(-'+idx+'00%)';
+// ── STAGE UI ──────────────────────────────────────────────────────────
+function updateStageUI() {
+  const idx=STAGE_ORDER.indexOf(currentStage);
+  // panels
+  ['pre','wed','thu'].forEach(dk=>{
+    const p=document.getElementById('panels-'+dk);
+    if(p) p.style.transform=`translateX(-${idx*100}%)`;
   });
-  // update dots
-  document.querySelectorAll('.stage-dot').forEach(d => {
-    d.classList.toggle('active', d.dataset.stage === currentStage);
-  });
-  // update pills
-  document.querySelectorAll('.stage-btn').forEach(b => {
-    b.classList.toggle('active', b.dataset.stage === currentStage);
-  });
+  // dots
+  document.querySelectorAll('.stage-dot').forEach(d=>d.classList.toggle('active',d.dataset.stage===currentStage));
+  // desktop pills
+  document.querySelectorAll('.stage-pill').forEach(b=>b.classList.toggle('active',b.dataset.stage===currentStage));
+  // label + arrows
+  const labelEl=document.getElementById('stage-label-name');
+  if(labelEl) {
+    labelEl.textContent=STAGE_LABELS[currentStage];
+    labelEl.style.color=STAGE_COLORS[currentStage];
+  }
+  const prevBtn=document.getElementById('arrow-prev');
+  const nextBtn=document.getElementById('arrow-next');
+  if(prevBtn) prevBtn.disabled=(idx===0);
+  if(nextBtn) nextBtn.disabled=(idx===STAGE_ORDER.length-1);
 }
 
+function stepStage(dir) {
+  const idx=STAGE_ORDER.indexOf(currentStage);
+  const next=idx+dir;
+  if(next>=0&&next<STAGE_ORDER.length) filterStage(STAGE_ORDER[next]);
+}
+
+// ── BANNERS ───────────────────────────────────────────────────────────
+function updateNowBanners() {
+  ['pre','wed','thu'].forEach(dk=>{
+    const cur=PROGRAM[dk].sessions.filter(s=>isNowPlaying(s,dk));
+    const el=document.getElementById('now-'+dk);
+    if(cur.length){el.innerHTML=`<span>▶</span><span><strong>Gerade:</strong> ${cur.map(s=>s.title).join(' · ')}</span>`;el.classList.add('visible');}
+    else el.classList.remove('visible');
+  });
+  const now=new Date(),pad=n=>String(n).padStart(2,'0');
+  const ts=`${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}`;
+  const tk=Object.keys(PROGRAM).find(k=>PROGRAM[k]?.date===ts);
+  const fe=document.getElementById('now-fav');
+  if(tk){const cur=PROGRAM[tk].sessions.filter(s=>isNowPlaying(s,tk)&&favorites.includes(s.id));
+    if(cur.length){fe.innerHTML=`<span>▶</span><span><strong>Dein Favorit läuft:</strong> ${cur.map(s=>s.title).join(' · ')}</span>`;fe.classList.add('visible');}
+    else fe.classList.remove('visible');}
+}
+
+function getConflictPairs(dk) {
+  const f=PROGRAM[dk].sessions.filter(s=>favorites.includes(s.id));
+  const pairs=[],seen=new Set();
+  f.forEach((a,i)=>f.forEach((b,j)=>{
+    if(i<j&&overlaps(a,b)){const k=[a.id,b.id].sort().join('|');if(!seen.has(k)){seen.add(k);pairs.push([a,b]);}}
+  }));
+  return pairs;
+}
+function updateConflictBanners() {
+  ['pre','wed','thu'].forEach(dk=>{
+    const el=document.getElementById('conflict-'+dk), pairs=getConflictPairs(dk);
+    if(pairs.length){el.innerHTML=`<span>⚡</span><span><strong>Zeitkonflikt:</strong><br>${pairs.map(([a,b])=>`<strong>${a.title}</strong> (${a.start}) und <strong>${b.title}</strong> (${b.start})`).join('<br>')}</span>`;el.classList.add('visible');}
+    else el.classList.remove('visible');
+  });
+  const el=document.getElementById('conflict-fav'),allPairs=[],seen=new Set();
+  ['pre','wed','thu'].forEach(dk=>getConflictPairs(dk).forEach(p=>{const k=p.map(s=>s.id).sort().join('|');if(!seen.has(k)){seen.add(k);allPairs.push(p);}}));
+  if(allPairs.length){el.innerHTML=`<span>⚡</span><span><strong>${allPairs.length===1?'1 Zeitkonflikt':allPairs.length+' Zeitkonflikte'}:</strong><br>${allPairs.map(([a,b])=>`<strong>${a.title}</strong> (${a.start}) und <strong>${b.title}</strong> (${b.start})`).join('<br>')}</span>`;el.classList.add('visible');}
+  else el.classList.remove('visible');
+}
+
+function updateFavCount() {
+  const b=document.getElementById('fav-count');
+  if(favorites.length){b.textContent=favorites.length;b.style.display='inline-block';}
+  else b.style.display='none';
+}
+
+// ── INTERACTIONS ──────────────────────────────────────────────────────
 function switchDay(day) {
-  currentDay = day;
-  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.day === day));
-  document.querySelectorAll('.day-view').forEach(v => v.classList.remove('active'));
+  currentDay=day;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.day===day));
+  document.querySelectorAll('.day-view').forEach(v=>v.classList.remove('active'));
   document.getElementById('fav-view').classList.remove('active');
-  const sf = document.getElementById('stage-filter');
-  const dotsBar = document.getElementById('stage-dots-bar');
-  if (day === 'fav') {
+  const sn=document.getElementById('stage-nav'), sf=document.getElementById('stage-filter-desktop');
+  if(day==='fav'){
     document.getElementById('fav-view').classList.add('active');
-    sf.style.display = 'none';
-    if (dotsBar) dotsBar.style.display = 'none';
+    sn.style.display='none'; sf.style.display='none';
   } else {
     document.getElementById('day-'+day).classList.add('active');
-    sf.style.display = 'flex';
-    if (dotsBar) dotsBar.style.display = '';
+    sn.style.display=''; sf.style.display='';
     initSwipe(day);
   }
   renderAll();
 }
 
 function filterStage(stage) {
-  currentStage = stage;
-  updateSwipePosition();
-  // Re-render only the active day panels to keep it fast
-  const dk = currentDay;
-  if (dk !== 'fav') {
-    STAGE_ORDER.forEach(s => {
-      const el = document.getElementById('panel-'+dk+'-'+s);
-      if (!el) return;
-      const saved = currentStage;
-      currentStage = s;
-      el.innerHTML = renderDay(dk);
-      currentStage = saved;
-    });
-  }
+  currentStage=stage;
+  updateStageUI();
   updateNowBanners();
   updateConflictBanners();
   updateFavCount();
-  updateSwipePosition();
 }
 
-// ── SWIPE ─────────────────────────────────────────────────────────────
-function initSwipe(dayKey) {
-  const wrapper = document.getElementById('swipe-'+dayKey);
-  if (!wrapper || wrapper._swipeInited) return;
-  wrapper._swipeInited = true;
-  let startX = 0, startY = 0, isDragging = false, isHoriz = null;
+function toggleCard(id){document.getElementById('card-'+id).classList.toggle('expanded');}
 
-  wrapper.addEventListener('touchstart', e => {
-    startX = e.touches[0].clientX;
-    startY = e.touches[0].clientY;
-    isDragging = true;
-    isHoriz = null;
-  }, { passive: true });
-
-  wrapper.addEventListener('touchmove', e => {
-    if (!isDragging) return;
-    const dx = e.touches[0].clientX - startX;
-    const dy = e.touches[0].clientY - startY;
-    if (isHoriz === null) isHoriz = Math.abs(dx) > Math.abs(dy);
-    if (isHoriz) e.preventDefault();
-  }, { passive: false });
-
-  wrapper.addEventListener('touchend', e => {
-    if (!isDragging || !isHoriz) { isDragging = false; return; }
-    const dx = e.changedTouches[0].clientX - startX;
-    isDragging = false;
-    if (Math.abs(dx) < 40) return;
-    const idx = STAGE_ORDER.indexOf(currentStage);
-    if (dx < 0 && idx < STAGE_ORDER.length - 1) filterStage(STAGE_ORDER[idx + 1]);
-    if (dx > 0 && idx > 0) filterStage(STAGE_ORDER[idx - 1]);
-  }, { passive: true });
-}
-
-function toggleCard(id) { document.getElementById('card-'+id).classList.toggle('expanded'); }
-
-function toggleFav(e, id) {
+function toggleFav(e,id){
   e.stopPropagation();
-  favorites = favorites.includes(id) ? favorites.filter(f=>f!==id) : [...favorites, id];
-  localStorage.setItem('leat-favs', JSON.stringify(favorites));
+  favorites=favorites.includes(id)?favorites.filter(f=>f!==id):[...favorites,id];
+  localStorage.setItem('leat-favs',JSON.stringify(favorites));
   renderAll();
 }
 
-function updateClock() {
-  const now = new Date();
-  document.getElementById('clock').textContent =
-    String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
+// ── SWIPE ─────────────────────────────────────────────────────────────
+function initSwipe(dk) {
+  const wrapper=document.getElementById('swipe-'+dk);
+  if(!wrapper||wrapper._si) return;
+  wrapper._si=true;
+  let sx=0,sy=0,drag=false,horiz=null;
+  wrapper.addEventListener('touchstart',e=>{sx=e.touches[0].clientX;sy=e.touches[0].clientY;drag=true;horiz=null;},{passive:true});
+  wrapper.addEventListener('touchmove',e=>{
+    if(!drag) return;
+    const dx=e.touches[0].clientX-sx,dy=e.touches[0].clientY-sy;
+    if(horiz===null) horiz=Math.abs(dx)>Math.abs(dy);
+    if(horiz) e.preventDefault();
+  },{passive:false});
+  wrapper.addEventListener('touchend',e=>{
+    if(!drag||!horiz){drag=false;return;}
+    const dx=e.changedTouches[0].clientX-sx; drag=false;
+    if(Math.abs(dx)<40) return;
+    const idx=STAGE_ORDER.indexOf(currentStage);
+    if(dx<0&&idx<STAGE_ORDER.length-1) filterStage(STAGE_ORDER[idx+1]);
+    if(dx>0&&idx>0) filterStage(STAGE_ORDER[idx-1]);
+  },{passive:true});
 }
 
+// ── CLOCK ─────────────────────────────────────────────────────────────
+function updateClock(){
+  const n=new Date();
+  document.getElementById('clock').textContent=String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0');
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────
 renderAll();
 updateClock();
-// init swipe for default day
 initSwipe('wed');
-setInterval(() => { updateClock(); renderAll(); }, 30000);
+setInterval(()=>{updateClock();renderAll();},30000);
 
-const now = new Date();
-const pad = n => String(n).padStart(2,'0');
-const todayStr = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}`;
-const autoDay = Object.keys(PROGRAM).find(k => PROGRAM[k]?.date === todayStr);
-if (autoDay) switchDay(autoDay); else initSwipe(currentDay);
+const now=new Date(),pad=n=>String(n).padStart(2,'0');
+const todayStr=`${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}`;
+const autoDay=Object.keys(PROGRAM).find(k=>PROGRAM[k]?.date===todayStr);
+if(autoDay) switchDay(autoDay); else initSwipe(currentDay);
 </script>
 </body>
 </html>
