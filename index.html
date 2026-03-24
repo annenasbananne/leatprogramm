@@ -288,7 +288,64 @@
   ::-webkit-scrollbar { width: 4px; }
   ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 
+  /* SWIPE STAGE PANELS */
+  .stage-panels-wrapper {
+    overflow: hidden;
+    touch-action: pan-y;
+  }
+  .stage-panels {
+    display: flex;
+    transition: transform 0.28s cubic-bezier(0.4,0,0.2,1);
+    will-change: transform;
+  }
+  .stage-panel {
+    flex-shrink: 0;
+    width: 100%;
+    padding: 0 16px;
+  }
+
+  /* STAGE DOTS (mobile indicator) */
+  .stage-dots-bar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 8px 0 7px;
+    display: none;
+  }
+  .stage-dots {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    align-items: center;
+  }
+  .stage-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    transition: opacity 0.15s, transform 0.15s;
+    cursor: pointer;
+    opacity: 0.22;
+  }
+  .stage-dot.active { transform: scale(1.4); opacity: 1; }
+  .stage-dot[data-stage="all"]       { background: var(--text); }
+  .stage-dot[data-stage="main"]      { background: var(--stage-main); }
+  .stage-dot[data-stage="community"] { background: var(--stage-community); }
+  .stage-dot[data-stage="pixel"]     { background: var(--stage-pixel); }
+  .stage-dot[data-stage="specials"]  { background: var(--stage-specials); }
+  .stage-dot-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--muted);
+    margin: 0 4px;
+  }
+
+  @media (max-width: 599px) {
+    .stage-filter { display: none !important; }
+    .stage-dots-bar { display: block; }
+    .stage-panels-wrapper { display: block; }
+    .content { padding: 0 0 80px; }
+  }
   @media (min-width: 600px) {
+    .stage-dots-bar { display: none; }
+    .stage-panels { display: block !important; transform: none !important; }
+    .stage-panel { width: auto; padding: 0; }
     .content, header, .stage-filter { max-width: 700px; margin-left: auto; margin-right: auto; }
     .content { padding-left: 24px; padding-right: 24px; }
     header { padding-left: 24px; padding-right: 24px; }
@@ -326,26 +383,61 @@
   <button class="stage-btn" data-stage="specials"  onclick="filterStage('specials')">Specials</button>
 </div>
 
+<!-- Mobile dot indicators -->
+<div class="stage-dots-bar" id="stage-dots-bar">
+  <div class="stage-dots">
+    <span class="stage-dot active" data-stage="all"       onclick="filterStage('all')"></span>
+    <span class="stage-dot"        data-stage="main"      onclick="filterStage('main')"></span>
+    <span class="stage-dot"        data-stage="community" onclick="filterStage('community')"></span>
+    <span class="stage-dot"        data-stage="pixel"     onclick="filterStage('pixel')"></span>
+    <span class="stage-dot"        data-stage="specials"  onclick="filterStage('specials')"></span>
+  </div>
+</div>
+
 <div class="content">
   <div class="day-view" id="day-pre">
-    <div class="now-banner"      id="now-pre"></div>
-    <div class="conflict-banner" id="conflict-pre"></div>
-    <div class="sessions-list"   id="list-pre"></div>
+    <div class="now-banner"      id="now-pre" style="margin:12px 16px 0"></div>
+    <div class="conflict-banner" id="conflict-pre" style="margin:6px 16px 0"></div>
+    <div class="stage-panels-wrapper" id="swipe-pre">
+      <div class="stage-panels" id="panels-pre">
+        <div class="stage-panel" id="panel-pre-all"></div>
+        <div class="stage-panel" id="panel-pre-main"></div>
+        <div class="stage-panel" id="panel-pre-community"></div>
+        <div class="stage-panel" id="panel-pre-pixel"></div>
+        <div class="stage-panel" id="panel-pre-specials"></div>
+      </div>
+    </div>
   </div>
   <div class="day-view active" id="day-wed">
-    <div class="now-banner"      id="now-wed"></div>
-    <div class="conflict-banner" id="conflict-wed"></div>
-    <div class="sessions-list"   id="list-wed"></div>
+    <div class="now-banner"      id="now-wed" style="margin:12px 16px 0"></div>
+    <div class="conflict-banner" id="conflict-wed" style="margin:6px 16px 0"></div>
+    <div class="stage-panels-wrapper" id="swipe-wed">
+      <div class="stage-panels" id="panels-wed">
+        <div class="stage-panel" id="panel-wed-all"></div>
+        <div class="stage-panel" id="panel-wed-main"></div>
+        <div class="stage-panel" id="panel-wed-community"></div>
+        <div class="stage-panel" id="panel-wed-pixel"></div>
+        <div class="stage-panel" id="panel-wed-specials"></div>
+      </div>
+    </div>
   </div>
   <div class="day-view" id="day-thu">
-    <div class="now-banner"      id="now-thu"></div>
-    <div class="conflict-banner" id="conflict-thu"></div>
-    <div class="sessions-list"   id="list-thu"></div>
+    <div class="now-banner"      id="now-thu" style="margin:12px 16px 0"></div>
+    <div class="conflict-banner" id="conflict-thu" style="margin:6px 16px 0"></div>
+    <div class="stage-panels-wrapper" id="swipe-thu">
+      <div class="stage-panels" id="panels-thu">
+        <div class="stage-panel" id="panel-thu-all"></div>
+        <div class="stage-panel" id="panel-thu-main"></div>
+        <div class="stage-panel" id="panel-thu-community"></div>
+        <div class="stage-panel" id="panel-thu-pixel"></div>
+        <div class="stage-panel" id="panel-thu-specials"></div>
+      </div>
+    </div>
   </div>
   <div id="fav-view">
-    <div class="now-banner"      id="now-fav"></div>
-    <div class="conflict-banner" id="conflict-fav"></div>
-    <div id="list-fav"></div>
+    <div class="now-banner"      id="now-fav" style="margin:12px 16px 0"></div>
+    <div class="conflict-banner" id="conflict-fav" style="margin:6px 16px 0"></div>
+    <div id="list-fav" style="padding:0 16px"></div>
   </div>
 </div>
 
@@ -569,12 +661,41 @@ function updateFavCount() {
   else { b.style.display = 'none'; }
 }
 
+const STAGE_ORDER = ['all','main','community','pixel','specials'];
+
 function renderAll() {
-  ['pre','wed','thu'].forEach(dk => { document.getElementById('list-'+dk).innerHTML = renderDay(dk); });
+  ['pre','wed','thu'].forEach(dk => {
+    STAGE_ORDER.forEach(stage => {
+      const el = document.getElementById('panel-'+dk+'-'+stage);
+      if (!el) return;
+      // temporarily set filter to render each panel
+      const saved = currentStage;
+      currentStage = stage;
+      el.innerHTML = renderDay(dk);
+      currentStage = saved;
+    });
+  });
   document.getElementById('list-fav').innerHTML = renderFavs();
   updateNowBanners();
   updateConflictBanners();
   updateFavCount();
+  updateSwipePosition();
+}
+
+function updateSwipePosition() {
+  const idx = STAGE_ORDER.indexOf(currentStage);
+  ['pre','wed','thu'].forEach(dk => {
+    const panels = document.getElementById('panels-'+dk);
+    if (panels) panels.style.transform = 'translateX(-'+idx+'00%)';
+  });
+  // update dots
+  document.querySelectorAll('.stage-dot').forEach(d => {
+    d.classList.toggle('active', d.dataset.stage === currentStage);
+  });
+  // update pills
+  document.querySelectorAll('.stage-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.stage === currentStage);
+  });
 }
 
 function switchDay(day) {
@@ -583,20 +704,72 @@ function switchDay(day) {
   document.querySelectorAll('.day-view').forEach(v => v.classList.remove('active'));
   document.getElementById('fav-view').classList.remove('active');
   const sf = document.getElementById('stage-filter');
+  const dotsBar = document.getElementById('stage-dots-bar');
   if (day === 'fav') {
     document.getElementById('fav-view').classList.add('active');
     sf.style.display = 'none';
+    if (dotsBar) dotsBar.style.display = 'none';
   } else {
     document.getElementById('day-'+day).classList.add('active');
     sf.style.display = 'flex';
+    if (dotsBar) dotsBar.style.display = '';
+    initSwipe(day);
   }
   renderAll();
 }
 
 function filterStage(stage) {
   currentStage = stage;
-  document.querySelectorAll('.stage-btn').forEach(b => b.classList.toggle('active', b.dataset.stage === stage));
-  renderAll();
+  updateSwipePosition();
+  // Re-render only the active day panels to keep it fast
+  const dk = currentDay;
+  if (dk !== 'fav') {
+    STAGE_ORDER.forEach(s => {
+      const el = document.getElementById('panel-'+dk+'-'+s);
+      if (!el) return;
+      const saved = currentStage;
+      currentStage = s;
+      el.innerHTML = renderDay(dk);
+      currentStage = saved;
+    });
+  }
+  updateNowBanners();
+  updateConflictBanners();
+  updateFavCount();
+  updateSwipePosition();
+}
+
+// ── SWIPE ─────────────────────────────────────────────────────────────
+function initSwipe(dayKey) {
+  const wrapper = document.getElementById('swipe-'+dayKey);
+  if (!wrapper || wrapper._swipeInited) return;
+  wrapper._swipeInited = true;
+  let startX = 0, startY = 0, isDragging = false, isHoriz = null;
+
+  wrapper.addEventListener('touchstart', e => {
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+    isDragging = true;
+    isHoriz = null;
+  }, { passive: true });
+
+  wrapper.addEventListener('touchmove', e => {
+    if (!isDragging) return;
+    const dx = e.touches[0].clientX - startX;
+    const dy = e.touches[0].clientY - startY;
+    if (isHoriz === null) isHoriz = Math.abs(dx) > Math.abs(dy);
+    if (isHoriz) e.preventDefault();
+  }, { passive: false });
+
+  wrapper.addEventListener('touchend', e => {
+    if (!isDragging || !isHoriz) { isDragging = false; return; }
+    const dx = e.changedTouches[0].clientX - startX;
+    isDragging = false;
+    if (Math.abs(dx) < 40) return;
+    const idx = STAGE_ORDER.indexOf(currentStage);
+    if (dx < 0 && idx < STAGE_ORDER.length - 1) filterStage(STAGE_ORDER[idx + 1]);
+    if (dx > 0 && idx > 0) filterStage(STAGE_ORDER[idx - 1]);
+  }, { passive: true });
 }
 
 function toggleCard(id) { document.getElementById('card-'+id).classList.toggle('expanded'); }
@@ -616,13 +789,15 @@ function updateClock() {
 
 renderAll();
 updateClock();
+// init swipe for default day
+initSwipe('wed');
 setInterval(() => { updateClock(); renderAll(); }, 30000);
 
 const now = new Date();
 const pad = n => String(n).padStart(2,'0');
 const todayStr = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}`;
 const autoDay = Object.keys(PROGRAM).find(k => PROGRAM[k]?.date === todayStr);
-if (autoDay) switchDay(autoDay);
+if (autoDay) switchDay(autoDay); else initSwipe(currentDay);
 </script>
 </body>
 </html>
