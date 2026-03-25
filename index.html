@@ -7,218 +7,311 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-/* ── TOKENS ───────────────────────────────────────────────── */
+/* ── LEAT BRAND COLORS (from logo) ───────────────────────── */
 :root {
-  --accent:    #c8f000;
-  --accent-dk: #96b800;
-  --red:       #e8001e;
-  --stage-main:      #1c1c1e;
-  --stage-community: #0a84ff;
-  --stage-pixel:     #bf5af2;
-  --stage-specials:  #ff9f0a;
+  --leat-blue:    #0066cc;
+  --leat-indigo:  #5533bb;
+  --leat-magenta: #c0006e;
+  --leat-orange:  #e07020;
+  --leat-dark:    #1e2d3d;
+  --leat-grad: linear-gradient(135deg, #0066cc 0%, #7722aa 40%, #c0006e 70%, #e07020 100%);
+
+  /* Stage colors mapped to logo gradient stops */
+  --stage-main:      #1e2d3d;
+  --stage-community: #0066cc;
+  --stage-pixel:     #c0006e;
+  --stage-specials:  #e07020;
+  --stage-all:       #7722aa;
 }
+
+/* ── LIGHT THEME ─────────────────────────────────────────── */
 [data-theme="light"] {
-  --bg:          #f2f2f7;
-  --bg2:         #ffffff;
-  --surface:     #ffffff;
-  --surface2:    #f2f2f7;
-  --border:      rgba(60,60,67,0.13);
-  --border2:     rgba(60,60,67,0.08);
-  --text:        #1c1c1e;
-  --text2:       #3a3a3c;
-  --muted:       #8e8e93;
-  --header-bg:   rgba(242,242,247,0.85);
-  --card-shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
+  --bg:           #f0f2f5;
+  --bg2:          #ffffff;
+  --surface:      #ffffff;
+  --surface2:     #f0f2f5;
+  --surface3:     #e4e7ec;
+  --border:       rgba(30,45,61,0.10);
+  --border2:      rgba(30,45,61,0.06);
+  --text:         #1e2d3d;
+  --text2:        #3a4d60;
+  --muted:        #7a8fa0;
+  --header-bg:    rgba(240,242,245,0.88);
+  --card-shadow:  0 1px 4px rgba(30,45,61,0.08), 0 1px 2px rgba(30,45,61,0.04);
 }
+/* ── DARK THEME ──────────────────────────────────────────── */
 [data-theme="dark"] {
-  --bg:          #000000;
-  --bg2:         #1c1c1e;
-  --surface:     #1c1c1e;
-  --surface2:    #2c2c2e;
-  --border:      rgba(255,255,255,0.1);
-  --border2:     rgba(255,255,255,0.06);
-  --text:        #ffffff;
-  --text2:       #ebebf5;
-  --muted:       #8e8e93;
-  --header-bg:   rgba(0,0,0,0.85);
-  --card-shadow: 0 1px 3px rgba(0,0,0,0.4);
-  --stage-main:  #ffffff;
+  --bg:           #0e1820;
+  --bg2:          #1a2635;
+  --surface:      #1a2635;
+  --surface2:     #243347;
+  --surface3:     #2e4058;
+  --border:       rgba(255,255,255,0.08);
+  --border2:      rgba(255,255,255,0.04);
+  --text:         #eef2f6;
+  --text2:        #c8d4de;
+  --muted:        #6e8aa0;
+  --header-bg:    rgba(14,24,32,0.90);
+  --card-shadow:  0 1px 4px rgba(0,0,0,0.35);
+  --stage-main:   #8ab0d0;
 }
 
-/* ── RESET ────────────────────────────────────────────────── */
-*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
-html { -webkit-text-size-adjust: 100%; }
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  font-size: 15px;
-  line-height: 1.4;
-  min-height: 100vh;
-  overflow-x: hidden;
-  transition: background 0.3s, color 0.3s;
+/* ── RESET ───────────────────────────────────────────────── */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html{-webkit-text-size-adjust:100%;}
+body{
+  background:var(--bg); color:var(--text);
+  font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+  font-size:15px; line-height:1.4; min-height:100vh; overflow-x:hidden;
+  transition:background .3s,color .3s;
 }
 
-/* ── HEADER ───────────────────────────────────────────────── */
-header {
+/* ── LAYOUT WRAPPER (desktop) ────────────────────────────── */
+.app-shell {
+  display: flex; flex-direction: column; min-height: 100vh;
+}
+@media (min-width: 900px) {
+  .app-shell { flex-direction: row; align-items: flex-start; }
+}
+
+/* ── SIDEBAR (desktop) ───────────────────────────────────── */
+.sidebar {
+  display: none;
+}
+@media (min-width: 900px) {
+  .sidebar {
+    display: flex; flex-direction: column;
+    width: 240px; flex-shrink: 0;
+    position: sticky; top: 0; height: 100vh;
+    background: var(--leat-dark);
+    padding: 28px 0 20px;
+    z-index: 50;
+  }
+  .sidebar-logo {
+    padding: 0 24px 28px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+  }
+  .sidebar-logo-text {
+    font-weight: 700; font-size: 1.4rem; letter-spacing: -0.02em; color: #fff;
+  }
+  .sidebar-logo-x { background: var(--leat-grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .sidebar-logo-year { font-weight: 300; font-size: 0.75rem; color: rgba(255,255,255,0.45); margin-top: 2px; letter-spacing: 0.05em; }
+
+  .sidebar-clock {
+    padding: 14px 24px 0;
+    font-size: 0.75rem; color: rgba(255,255,255,0.4);
+    display: flex; align-items: center; gap: 6px;
+  }
+  .sidebar-live-dot {
+    width: 6px; height: 6px; border-radius: 50%; background: #30d158; animation: blink 2s infinite; flex-shrink: 0;
+  }
+
+  .sidebar-section { padding: 20px 16px 8px; font-size: 0.63rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.3); }
+
+  .sidebar-day-btn {
+    display: flex; align-items: center; gap: 10px;
+    width: 100%; padding: 9px 16px 9px 20px;
+    background: none; border: none; cursor: pointer;
+    font-family: inherit; font-size: 0.85rem; font-weight: 500;
+    color: rgba(255,255,255,0.55); text-align: left;
+    border-radius: 0; transition: background .15s, color .15s;
+    position: relative;
+  }
+  .sidebar-day-btn::before {
+    content: ''; position: absolute; left: 0; top: 50%; transform: translateY(-50%);
+    width: 3px; height: 0; border-radius: 0 2px 2px 0;
+    background: var(--leat-grad); transition: height .2s;
+  }
+  .sidebar-day-btn.active { color: #fff; background: rgba(255,255,255,0.07); }
+  .sidebar-day-btn.active::before { height: 70%; }
+  .sidebar-day-btn:hover:not(.active) { color: rgba(255,255,255,0.8); background: rgba(255,255,255,0.04); }
+
+  .sidebar-date { font-size: 0.7rem; color: rgba(255,255,255,0.3); margin-top: 1px; font-weight: 400; }
+  .sidebar-fav-badge {
+    margin-left: auto; background: var(--leat-magenta); color: #fff;
+    border-radius: 8px; font-size: 0.62rem; font-weight: 700; padding: 1px 6px;
+  }
+
+  .sidebar-section-stage { padding: 20px 16px 8px; font-size: 0.63rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.3); }
+
+  .sidebar-stage-btn {
+    display: flex; align-items: center; gap: 10px;
+    width: 100%; padding: 8px 16px 8px 20px;
+    background: none; border: none; cursor: pointer;
+    font-family: inherit; font-size: 0.82rem; font-weight: 500;
+    color: rgba(255,255,255,0.5); text-align: left;
+    transition: background .15s, color .15s;
+  }
+  .sidebar-stage-btn.active { color: #fff; background: rgba(255,255,255,0.07); }
+  .sidebar-stage-btn:hover:not(.active) { color: rgba(255,255,255,0.75); }
+  .sidebar-stage-dot {
+    width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+  }
+  .sidebar-stage-dot[data-stage="all"]       { background: var(--leat-grad); background-size: 80px; }
+  .sidebar-stage-dot[data-stage="main"]      { background: var(--stage-main); }
+  .sidebar-stage-dot[data-stage="community"] { background: var(--stage-community); }
+  .sidebar-stage-dot[data-stage="pixel"]     { background: var(--stage-pixel); }
+  .sidebar-stage-dot[data-stage="specials"]  { background: var(--stage-specials); }
+
+  .sidebar-bottom {
+    margin-top: auto; padding: 16px 20px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .dm-toggle-sidebar {
+    background: rgba(255,255,255,0.08); border: none; cursor: pointer;
+    padding: 6px 12px; border-radius: 8px; font-size: 0.78rem; color: rgba(255,255,255,0.7);
+    transition: background .15s; display: flex; align-items: center; gap: 6px;
+  }
+  .dm-toggle-sidebar:hover { background: rgba(255,255,255,0.14); }
+}
+
+/* ── MAIN AREA ───────────────────────────────────────────── */
+.main-area { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+
+/* ── MOBILE HEADER ───────────────────────────────────────── */
+.mobile-header {
   position: sticky; top: 0; z-index: 200;
   background: var(--header-bg);
   backdrop-filter: saturate(180%) blur(20px);
   -webkit-backdrop-filter: saturate(180%) blur(20px);
   border-bottom: 0.5px solid var(--border);
   padding: 0 16px;
-  transition: background 0.3s;
 }
-.header-top {
+@media (min-width: 900px) { .mobile-header { display: none; } }
+
+.mobile-header-top {
   display: flex; align-items: center; justify-content: space-between;
   padding: 12px 0 10px;
 }
-.logo { display: flex; align-items: baseline; gap: 4px; }
-.logo-leat {
-  font-weight: 700; font-size: 1.2rem; letter-spacing: -0.02em; color: var(--text);
+.mobile-logo { display: flex; align-items: baseline; gap: 3px; }
+.mobile-logo-text { font-weight: 700; font-size: 1.15rem; letter-spacing: -0.02em; color: var(--text); }
+.mobile-logo-x {
+  font-weight: 700; font-size: 1.15rem; letter-spacing: -0.02em;
+  background: var(--leat-grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
 }
-.logo-x { font-weight: 700; font-size: 1.2rem; color: var(--accent-dk); letter-spacing: -0.02em; }
-.logo-year { font-weight: 400; font-size: 0.72rem; color: var(--muted); margin-left: 2px; letter-spacing: 0.02em; }
-
-.header-right { display: flex; align-items: center; gap: 10px; }
-
-.live-clock {
-  font-size: 0.78rem; font-weight: 500; color: var(--muted);
-  display: flex; align-items: center; gap: 5px;
-}
-.live-dot {
-  width: 6px; height: 6px; border-radius: 50%;
-  background: #30d158; animation: blink 2s infinite;
-}
-@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
-
-/* Dark mode toggle */
+.mobile-logo-year { font-size: 0.7rem; color: var(--muted); margin-left: 2px; }
+.mobile-header-right { display: flex; align-items: center; gap: 8px; }
+.live-clock { font-size: 0.75rem; font-weight: 500; color: var(--muted); display: flex; align-items: center; gap: 5px; }
+.live-dot { width: 6px; height: 6px; border-radius: 50%; background: #30d158; animation: blink 2s infinite; }
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
 .dm-toggle {
-  width: 32px; height: 32px; border-radius: 50%;
+  width: 30px; height: 30px; border-radius: 50%;
   background: var(--surface2); border: none; cursor: pointer;
   display: flex; align-items: center; justify-content: center;
-  font-size: 0.9rem; transition: background 0.2s;
-  color: var(--text);
+  font-size: 0.85rem; color: var(--text); transition: background .2s;
 }
-.dm-toggle:active { transform: scale(0.92); }
+.dm-toggle:active { transform: scale(.92); }
 
-/* ── DAY TABS ─────────────────────────────────────────────── */
-.tabs {
-  display: flex; overflow-x: auto; scrollbar-width: none;
-  gap: 0; padding-bottom: 1px;
-}
-.tabs::-webkit-scrollbar { display: none; }
+/* mobile tabs */
+.mobile-tabs { display: flex; overflow-x: auto; scrollbar-width: none; padding-bottom: 1px; }
+.mobile-tabs::-webkit-scrollbar { display: none; }
 .tab {
   flex-shrink: 0; padding: 9px 14px 8px;
-  font-size: 0.8rem; font-weight: 600; letter-spacing: -0.01em;
+  font-size: 0.8rem; font-weight: 600;
   cursor: pointer; border: none; background: transparent;
   color: var(--muted); border-bottom: 2px solid transparent;
-  transition: color 0.15s, border-color 0.15s;
-  white-space: nowrap;
+  transition: color .15s, border-color .15s; white-space: nowrap;
 }
-.tab.active { color: var(--accent-dk); border-bottom-color: var(--accent-dk); }
+.tab.active { color: var(--leat-blue); border-bottom-color: var(--leat-blue); }
 .fav-badge {
-  display: inline-block; background: var(--red); color: #fff;
+  display: inline-block; background: var(--leat-magenta); color: #fff;
   border-radius: 8px; font-size: 0.6rem; font-weight: 700;
   padding: 1px 5px; margin-left: 3px; vertical-align: middle;
 }
 
-/* ── STAGE NAV BAR (mobile) ───────────────────────────────── */
+/* ── DESKTOP PAGE HEADER ──────────────────────────────────── */
+.page-header {
+  display: none;
+  padding: 32px 32px 0;
+  align-items: flex-start; justify-content: space-between;
+}
+@media (min-width: 900px) {
+  .page-header { display: flex; }
+}
+.page-title {
+  font-size: 1.6rem; font-weight: 700; letter-spacing: -0.03em; color: var(--text);
+}
+.page-subtitle { font-size: 0.82rem; color: var(--muted); margin-top: 3px; }
+.page-live-clock {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 0.78rem; color: var(--muted); font-weight: 500;
+  background: var(--surface); border: 0.5px solid var(--border);
+  padding: 6px 12px; border-radius: 20px;
+}
+.page-live-dot { width: 6px; height: 6px; border-radius: 50%; background: #30d158; animation: blink 2s infinite; }
+
+/* ── MOBILE STAGE NAV ─────────────────────────────────────── */
 .stage-nav {
   background: var(--header-bg);
   backdrop-filter: saturate(180%) blur(20px);
   -webkit-backdrop-filter: saturate(180%) blur(20px);
   border-bottom: 0.5px solid var(--border);
-  padding: 8px 16px;
+  padding: 8px 16px 10px;
 }
-.stage-nav-inner {
-  display: flex; align-items: center; justify-content: space-between; gap: 8px;
-}
+@media (min-width: 900px) { .stage-nav { display: none; } }
+
+.stage-nav-inner { display: flex; align-items: center; gap: 10px; }
 .stage-arrow {
-  flex-shrink: 0; width: 28px; height: 28px; border-radius: 50%;
+  flex-shrink: 0; width: 30px; height: 30px; border-radius: 50%;
   background: var(--surface2); border: none; cursor: pointer;
   display: flex; align-items: center; justify-content: center;
-  font-size: 0.75rem; color: var(--text2); transition: background 0.15s, opacity 0.15s;
+  font-size: 0.9rem; font-weight: 600; color: var(--text2);
+  transition: background .15s, opacity .15s;
 }
-.stage-arrow:disabled { opacity: 0.25; cursor: default; }
-.stage-arrow:not(:disabled):active { background: var(--border); }
+.stage-arrow:disabled { opacity: .25; cursor: default; }
+.stage-arrow:not(:disabled):active { background: var(--surface3); }
 
 .stage-label-area { flex: 1; text-align: center; }
-.stage-label-name {
-  font-size: 0.82rem; font-weight: 600; letter-spacing: -0.01em;
-  color: var(--text); display: block;
-}
-.stage-label-sub {
-  font-size: 0.65rem; color: var(--muted); font-weight: 400;
-}
+.stage-label-name { font-size: 0.85rem; font-weight: 600; color: var(--text); display: block; }
+.stage-label-hint { font-size: 0.62rem; color: var(--muted); margin-top: 1px; }
 
-/* Dots */
-.stage-dots {
-  display: flex; justify-content: center; gap: 5px; margin-top: 5px;
-}
+.stage-dots { display: flex; justify-content: center; gap: 5px; margin-top: 7px; }
 .stage-dot {
-  width: 6px; height: 6px; border-radius: 50%;
-  background: var(--muted); opacity: 0.3;
-  transition: opacity 0.2s, transform 0.2s, background 0.2s;
-  cursor: pointer;
+  width: 6px; height: 6px; border-radius: 50%; opacity: .25;
+  transition: opacity .2s, transform .2s; cursor: pointer;
 }
-.stage-dot.active { opacity: 1; transform: scale(1.3); }
-.stage-dot[data-stage="all"]       { background: var(--text); }
+.stage-dot.active { opacity: 1; transform: scale(1.35); }
+.stage-dot[data-stage="all"]       { background: var(--leat-indigo); }
 .stage-dot[data-stage="main"]      { background: var(--stage-main); }
 .stage-dot[data-stage="community"] { background: var(--stage-community); }
 .stage-dot[data-stage="pixel"]     { background: var(--stage-pixel); }
 .stage-dot[data-stage="specials"]  { background: var(--stage-specials); }
 
-/* Desktop pill filter */
-.stage-filter-desktop {
-  display: none;
-  gap: 6px; padding: 10px 16px;
-  background: var(--header-bg);
-  backdrop-filter: saturate(180%) blur(20px);
-  border-bottom: 0.5px solid var(--border);
-  overflow-x: auto; scrollbar-width: none;
-}
-.stage-filter-desktop::-webkit-scrollbar { display: none; }
-.stage-pill {
-  flex-shrink: 0; padding: 5px 14px; border-radius: 100px;
-  font-size: 0.75rem; font-weight: 600;
-  cursor: pointer; border: 1.5px solid var(--border);
-  background: transparent; color: var(--muted);
-  transition: all 0.15s; white-space: nowrap;
-}
-.stage-pill.active { color: #fff; border-color: transparent; }
-.stage-pill[data-stage="all"].active       { background: var(--text2); }
-.stage-pill[data-stage="main"].active      { background: var(--stage-main); }
-.stage-pill[data-stage="community"].active { background: var(--stage-community); }
-.stage-pill[data-stage="pixel"].active     { background: var(--stage-pixel); }
-.stage-pill[data-stage="specials"].active  { background: var(--stage-specials); }
-
 /* ── CONTENT ──────────────────────────────────────────────── */
-.content { padding-bottom: 80px; }
+.content { flex: 1; padding-bottom: 80px; }
+@media (min-width: 900px) { .content { padding-bottom: 40px; } }
 
 .day-view { display: none; }
 .day-view.active { display: block; }
 #fav-view { display: none; }
-#fav-view.active { display: block; padding: 0 16px; }
+#fav-view.active { display: block; }
+
+/* ── DESKTOP CONTENT LAYOUT ───────────────────────────────── */
+.desktop-content {
+  padding: 20px 32px 0;
+}
+@media (max-width: 899px) { .desktop-content { padding: 0; } }
 
 /* ── BANNERS ──────────────────────────────────────────────── */
 .banner-area { padding: 0 16px; }
+@media (min-width: 900px) { .banner-area { padding: 0; } }
+
 .now-banner {
-  margin: 10px 0 0; padding: 10px 13px;
-  background: var(--accent);
-  border-radius: 12px;
-  font-size: 0.78rem; font-weight: 500; color: #1c1c1e;
+  margin: 10px 0 0; padding: 10px 14px;
+  background: linear-gradient(135deg, rgba(0,102,204,0.12), rgba(192,0,110,0.10));
+  border: 1px solid rgba(0,102,204,0.25);
+  border-radius: 12px; font-size: 0.78rem; font-weight: 500; color: var(--leat-blue);
   display: none; align-items: flex-start; gap: 8px;
 }
+[data-theme="dark"] .now-banner { color: #60aaff; border-color: rgba(0,102,204,0.35); background: rgba(0,102,204,0.12); }
 .now-banner.visible { display: flex; }
 .now-banner strong { font-weight: 700; }
 
 .conflict-banner {
-  margin: 6px 0 0; padding: 10px 13px;
-  background: rgba(232,0,30,0.08);
-  border: 1px solid rgba(232,0,30,0.25);
-  border-radius: 12px;
-  font-size: 0.78rem; color: var(--red);
+  margin: 6px 0 0; padding: 10px 14px;
+  background: rgba(192,0,110,0.06); border: 1px solid rgba(192,0,110,0.25);
+  border-radius: 12px; font-size: 0.78rem; color: var(--leat-magenta);
   display: none; align-items: flex-start; gap: 9px; font-weight: 500; line-height: 1.45;
 }
 .conflict-banner.visible { display: flex; }
@@ -226,284 +319,321 @@ header {
 
 /* ── SWIPE PANELS ─────────────────────────────────────────── */
 .stage-panels-wrapper { overflow: hidden; touch-action: pan-y; }
-.stage-panels {
-  display: flex;
-  transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
-  will-change: transform;
-}
+.stage-panels { display: flex; transition: transform .3s cubic-bezier(.4,0,.2,1); will-change: transform; }
 .stage-panel { flex-shrink: 0; width: 100%; padding: 0 16px 8px; }
+@media (min-width: 900px) {
+  .stage-panels { display: block !important; transform: none !important; }
+  .stage-panel { width: auto; padding: 0; }
+}
 
 /* ── TIME LABELS ──────────────────────────────────────────── */
 .time-label {
-  font-size: 0.68rem; font-weight: 600; letter-spacing: 0.04em;
-  text-transform: uppercase; color: var(--muted);
-  padding: 16px 0 6px;
-  border-top: 0.5px solid var(--border);
-  margin-top: 4px;
+  font-size: 0.67rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--muted); padding: 18px 0 6px;
+  border-top: 0.5px solid var(--border); margin-top: 4px;
 }
-.time-label:first-child { border-top: none; padding-top: 12px; }
+.time-label:first-child { border-top: none; padding-top: 14px; }
 
 /* ── SESSION CARDS ────────────────────────────────────────── */
 .session-card {
-  background: var(--surface);
-  border-radius: 12px;
-  margin-bottom: 8px;
-  overflow: hidden;
-  box-shadow: var(--card-shadow);
-  border: 0.5px solid var(--border2);
-  transition: box-shadow 0.2s, transform 0.15s;
+  background: var(--surface); border-radius: 14px;
+  margin-bottom: 8px; overflow: hidden;
+  box-shadow: var(--card-shadow); border: 0.5px solid var(--border2);
+  transition: box-shadow .2s, transform .15s, background .3s;
   position: relative;
 }
-.session-card:active { transform: scale(0.99); }
-
-/* left color bar */
-.session-card::before {
-  content: '';
-  position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
-  border-radius: 12px 0 0 12px;
-}
-.stage-main      .session-card::before { background: var(--stage-main); }
-.stage-community .session-card::before { background: var(--stage-community); }
-.stage-pixel     .session-card::before { background: var(--stage-pixel); }
-.stage-specials  .session-card::before { background: var(--stage-specials); }
-
-.session-card.now-playing {
-  box-shadow: 0 0 0 1.5px var(--accent-dk), var(--card-shadow);
-}
-.session-card.favorited.conflict {
-  box-shadow: 0 0 0 1.5px var(--red), var(--card-shadow);
+.session-card:active { transform: scale(.99); }
+@media (min-width: 900px) {
+  .session-card:hover { box-shadow: 0 4px 16px rgba(30,45,61,0.12); transform: translateY(-1px); }
+  [data-theme="dark"] .session-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.4); }
 }
 
-.card-header {
-  display: flex; align-items: flex-start;
-  padding: 11px 12px 11px 14px; gap: 10px;
-  cursor: pointer; user-select: none;
-}
-.card-main { flex: 1; min-width: 0; }
-.card-meta {
-  display: flex; align-items: center; gap: 6px;
-  margin-bottom: 3px; flex-wrap: wrap;
-}
-.card-time {
-  font-size: 0.7rem; font-weight: 600; color: var(--muted); white-space: nowrap;
-  font-variant-numeric: tabular-nums;
-}
+/* gradient left bar */
+.stage-main      .session-card::before { content:''; position:absolute; left:0; top:0; bottom:0; width:3px; border-radius:14px 0 0 14px; background: var(--stage-main); }
+.stage-community .session-card::before { content:''; position:absolute; left:0; top:0; bottom:0; width:3px; border-radius:14px 0 0 14px; background: var(--stage-community); }
+.stage-pixel     .session-card::before { content:''; position:absolute; left:0; top:0; bottom:0; width:3px; border-radius:14px 0 0 14px; background: var(--stage-pixel); }
+.stage-specials  .session-card::before { content:''; position:absolute; left:0; top:0; bottom:0; width:3px; border-radius:14px 0 0 14px; background: var(--stage-specials); }
+
+.session-card.now-playing { box-shadow: 0 0 0 1.5px var(--leat-blue), var(--card-shadow); }
+.session-card.favorited.conflict { box-shadow: 0 0 0 1.5px var(--leat-magenta), var(--card-shadow); }
+
+.card-header { display:flex; align-items:flex-start; padding:12px 12px 12px 15px; gap:10px; cursor:pointer; user-select:none; }
+.card-main { flex:1; min-width:0; }
+.card-meta { display:flex; align-items:center; gap:6px; margin-bottom:4px; flex-wrap:wrap; }
+.card-time { font-size:0.7rem; font-weight:600; color:var(--muted); white-space:nowrap; font-variant-numeric:tabular-nums; }
 .card-stage-pill {
-  font-size: 0.62rem; font-weight: 600; padding: 1px 7px;
-  border-radius: 100px; white-space: nowrap;
+  font-size:0.62rem; font-weight:600; padding:2px 8px; border-radius:100px; white-space:nowrap;
 }
-.stage-main      .card-stage-pill { background: rgba(28,28,30,0.08);  color: var(--stage-main); }
-.stage-community .card-stage-pill { background: rgba(10,132,255,0.1); color: var(--stage-community); }
-.stage-pixel     .card-stage-pill { background: rgba(191,90,242,0.1); color: var(--stage-pixel); }
-.stage-specials  .card-stage-pill { background: rgba(255,159,10,0.1); color: var(--stage-specials); }
-[data-theme="dark"] .stage-main .card-stage-pill { background: rgba(255,255,255,0.12); }
+.stage-main      .card-stage-pill { background:rgba(30,45,61,0.08);   color:var(--stage-main); }
+.stage-community .card-stage-pill { background:rgba(0,102,204,0.10);  color:var(--stage-community); }
+.stage-pixel     .card-stage-pill { background:rgba(192,0,110,0.10);  color:var(--stage-pixel); }
+.stage-specials  .card-stage-pill { background:rgba(224,112,32,0.12); color:var(--stage-specials); }
+[data-theme="dark"] .stage-main .card-stage-pill { background:rgba(138,176,208,0.15); }
 
-.now-tag {
-  font-size: 0.6rem; font-weight: 700;
-  background: var(--accent); color: #1c1c1e;
-  padding: 1px 7px; border-radius: 100px; animation: blink 2s infinite;
-}
-.card-title {
-  font-size: 0.88rem; font-weight: 600; line-height: 1.35;
-  color: var(--text); letter-spacing: -0.01em;
-}
-.card-actions {
-  display: flex; align-items: center; gap: 4px;
-  flex-shrink: 0; padding-top: 1px;
-}
-.conflict-tag { font-size: 0.9rem; cursor: default; }
-.fav-btn {
-  background: none; border: none; cursor: pointer;
-  font-size: 1rem; padding: 3px; line-height: 1;
-  color: var(--border); transition: color 0.15s, transform 0.15s;
-}
-.fav-btn.active { color: var(--red); }
-.fav-btn:active { transform: scale(1.25); }
+.now-tag { font-size:0.6rem; font-weight:700; background:var(--leat-blue); color:#fff; padding:2px 8px; border-radius:100px; animation:blink 2s infinite; }
+.card-title { font-size:0.88rem; font-weight:600; line-height:1.35; color:var(--text); letter-spacing:-0.01em; }
+.card-actions { display:flex; align-items:center; gap:5px; flex-shrink:0; padding-top:1px; }
+.conflict-tag { font-size:.9rem; cursor:default; }
+.fav-btn { background:none; border:none; cursor:pointer; font-size:1rem; padding:3px; line-height:1; color:var(--border); transition:color .15s,transform .15s; }
+.fav-btn.active { color:var(--leat-magenta); }
+.fav-btn:active { transform:scale(1.3); }
 .expand-btn {
-  background: none; border: none; cursor: pointer;
-  width: 22px; height: 22px; border-radius: 50%;
-  background: var(--surface2); color: var(--muted);
-  font-size: 0.65rem; display: flex; align-items: center; justify-content: center;
-  transition: transform 0.2s, background 0.15s; flex-shrink: 0;
+  background:none; border:none; cursor:pointer;
+  width:22px; height:22px; border-radius:50%; background:var(--surface2);
+  color:var(--muted); font-size:.65rem;
+  display:flex; align-items:center; justify-content:center;
+  transition:transform .2s, background .15s; flex-shrink:0;
 }
-.session-card.expanded .expand-btn { transform: rotate(180deg); }
+.session-card.expanded .expand-btn { transform:rotate(180deg); }
 
 /* ── CARD DETAILS ─────────────────────────────────────────── */
-.card-details {
-  display: none; padding: 0 14px 12px 14px;
-  border-top: 0.5px solid var(--border);
-}
-.session-card.expanded .card-details { display: block; }
-.card-speaker {
-  font-size: 0.77rem; color: var(--muted); padding-top: 9px; line-height: 1.5;
-}
-.card-speaker strong { color: var(--text2); font-weight: 600; }
+.card-details { display:none; padding:0 14px 13px 15px; border-top:0.5px solid var(--border); }
+.session-card.expanded .card-details { display:block; }
+.card-speaker { font-size:.77rem; color:var(--muted); padding-top:9px; line-height:1.55; }
+.card-speaker strong { color:var(--text2); font-weight:600; }
 .card-link {
-  display: inline-flex; align-items: center; gap: 5px;
-  margin-top: 9px; font-size: 0.75rem; font-weight: 600;
-  color: var(--stage-community); text-decoration: none;
-  transition: opacity 0.15s;
+  display:inline-flex; align-items:center; gap:4px;
+  margin-top:10px; font-size:.75rem; font-weight:600;
+  color:var(--leat-blue); text-decoration:none; transition:opacity .15s;
 }
-.card-link:active { opacity: 0.6; }
+.card-link:hover { opacity:.75; }
+
+/* ── DESKTOP GRID VIEW ────────────────────────────────────── */
+@media (min-width: 900px) {
+  .stage-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    align-items: start;
+    margin-top: 4px;
+  }
+  .stage-grid-col { }
+  .stage-col-header {
+    display: flex; align-items: center; gap: 8px;
+    padding: 0 0 12px;
+    border-bottom: 2px solid;
+    margin-bottom: 4px;
+  }
+  .stage-col-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+  .stage-col-name { font-size: 0.8rem; font-weight: 700; letter-spacing: 0.02em; }
+
+  .stage-col-header[data-stage="main"]      { border-color: var(--stage-main); }
+  .stage-col-header[data-stage="community"] { border-color: var(--stage-community); }
+  .stage-col-header[data-stage="pixel"]     { border-color: var(--stage-pixel); }
+  .stage-col-header[data-stage="specials"]  { border-color: var(--stage-specials); }
+
+  .stage-col-header[data-stage="main"]      .stage-col-dot  { background: var(--stage-main); }
+  .stage-col-header[data-stage="community"] .stage-col-dot  { background: var(--stage-community); }
+  .stage-col-header[data-stage="pixel"]     .stage-col-dot  { background: var(--stage-pixel); }
+  .stage-col-header[data-stage="specials"]  .stage-col-dot  { background: var(--stage-specials); }
+
+  .stage-col-header[data-stage="main"]      .stage-col-name { color: var(--stage-main); }
+  .stage-col-header[data-stage="community"] .stage-col-name { color: var(--stage-community); }
+  .stage-col-header[data-stage="pixel"]     .stage-col-name { color: var(--stage-pixel); }
+  .stage-col-header[data-stage="specials"]  .stage-col-name { color: var(--stage-specials); }
+
+  /* In grid mode, cards have no left bar padding issue */
+  .stage-grid .session-card { margin-bottom: 6px; }
+  .stage-grid .time-label { padding-top: 14px; }
+  .stage-grid .time-label:first-child { padding-top: 6px; }
+}
 
 /* ── FAVORITES ────────────────────────────────────────────── */
-.fav-empty {
-  text-align: center; padding: 60px 20px;
-  color: var(--muted); font-size: 0.85rem; line-height: 1.7;
-}
-.fav-empty .icon { font-size: 2.5rem; margin-bottom: 10px; display: block; }
-.day-header {
-  font-size: 0.7rem; font-weight: 700; letter-spacing: 0.06em;
-  text-transform: uppercase; color: var(--muted);
-  padding: 18px 0 8px;
-}
+.fav-view-inner { padding: 0 16px; }
+@media (min-width: 900px) { .fav-view-inner { padding: 0 32px; } }
+.fav-empty { text-align:center; padding:60px 20px; color:var(--muted); font-size:.85rem; line-height:1.7; }
+.fav-empty .icon { font-size:2.5rem; margin-bottom:10px; display:block; }
+.day-header { font-size:.7rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); padding:18px 0 8px; }
 
 /* ── FOOTER ───────────────────────────────────────────────── */
 .footer-note {
-  position: fixed; bottom: 0; left: 0; right: 0;
-  background: var(--header-bg);
-  backdrop-filter: saturate(180%) blur(20px);
-  -webkit-backdrop-filter: saturate(180%) blur(20px);
-  border-top: 0.5px solid var(--border);
-  padding: 8px 16px 10px;
-  font-size: 0.65rem; color: var(--muted); text-align: center;
+  position:fixed; bottom:0; left:0; right:0;
+  background:var(--header-bg); backdrop-filter:saturate(180%) blur(20px); -webkit-backdrop-filter:saturate(180%) blur(20px);
+  border-top:0.5px solid var(--border); padding:8px 16px 10px;
+  font-size:.65rem; color:var(--muted); text-align:center;
+  z-index: 100;
 }
-.footer-note a { color: var(--stage-community); text-decoration: none; }
+@media (min-width: 900px) {
+  .footer-note { left: 240px; }
+}
+.footer-note a { color:var(--leat-blue); text-decoration:none; }
 
-/* ── RESPONSIVE ───────────────────────────────────────────── */
-@media (max-width: 599px) {
-  .stage-filter-desktop { display: none !important; }
-  .stage-nav { display: block; }
-}
-@media (min-width: 600px) {
-  .stage-nav { display: none; }
-  .stage-filter-desktop { display: flex; }
-  .stage-panels { display: block !important; transform: none !important; }
-  .stage-panel { width: auto; padding: 0; }
-  .content, header, .stage-nav, .stage-filter-desktop {
-    max-width: 680px; margin-left: auto; margin-right: auto;
-  }
-  .stage-panel { padding: 0 24px; }
-  .banner-area { padding: 0 24px; }
-  #fav-view { padding: 0 24px; }
-  header { padding: 0 24px; }
-  .stage-filter-desktop { padding-left: 24px; padding-right: 24px; }
-}
-
-/* ── TRANSITIONS ──────────────────────────────────────────── */
-.session-card, header, .stage-nav, .stage-filter-desktop, .banner-area,
-.content, body { transition: background 0.3s, color 0.3s, border-color 0.3s; }
+/* transitions */
+.session-card,header,.stage-nav,.content,body { transition:background .3s,color .3s,border-color .3s; }
 </style>
 </head>
 <body>
 
-<header>
-  <div class="header-top">
-    <div class="logo">
-      <span class="logo-leat">LEaT</span>
-      <span class="logo-x"> X</span>
-      <span class="logo-year">'26</span>
-    </div>
-    <div class="header-right">
-      <div class="live-clock">
-        <span class="live-dot"></span>
-        <span id="clock">--:--</span>
-      </div>
-      <button class="dm-toggle" id="dm-toggle" onclick="toggleDark()" title="Dark Mode">🌙</button>
-    </div>
-  </div>
-  <div class="tabs">
-    <button class="tab" data-day="pre"  onclick="switchDay('pre')">03.03 Pre</button>
-    <button class="tab active" data-day="wed" onclick="switchDay('wed')">04.03 Mi</button>
-    <button class="tab" data-day="thu"  onclick="switchDay('thu')">05.03 Do</button>
-    <button class="tab" data-day="fav"  onclick="switchDay('fav')">♥ Meine <span class="fav-badge" id="fav-count" style="display:none">0</span></button>
-  </div>
-</header>
+<div class="app-shell">
 
-<!-- Mobile stage nav with arrows -->
-<div class="stage-nav" id="stage-nav">
-  <div class="stage-nav-inner">
-    <button class="stage-arrow" id="arrow-prev" onclick="stepStage(-1)">‹</button>
-    <div class="stage-label-area">
-      <span class="stage-label-name" id="stage-label-name">Alle Stages</span>
-      <span class="stage-label-sub">← wischen →</span>
+  <!-- ── SIDEBAR (desktop only) ───────────────────────────── -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-text">LEaT<span class="sidebar-logo-x"> X</span></div>
+      <div class="sidebar-logo-year">München · März 2026</div>
     </div>
-    <button class="stage-arrow" id="arrow-next" onclick="stepStage(1)">›</button>
-  </div>
-  <div class="stage-dots">
-    <span class="stage-dot active" data-stage="all"       onclick="filterStage('all')"></span>
-    <span class="stage-dot"        data-stage="main"      onclick="filterStage('main')"></span>
-    <span class="stage-dot"        data-stage="community" onclick="filterStage('community')"></span>
-    <span class="stage-dot"        data-stage="pixel"     onclick="filterStage('pixel')"></span>
-    <span class="stage-dot"        data-stage="specials"  onclick="filterStage('specials')"></span>
-  </div>
-</div>
+    <div class="sidebar-clock">
+      <span class="sidebar-live-dot"></span>
+      <span id="sidebar-clock">--:--</span>
+    </div>
 
-<!-- Desktop pill filter -->
-<div class="stage-filter-desktop" id="stage-filter-desktop">
-  <button class="stage-pill active" data-stage="all"       onclick="filterStage('all')">Alle</button>
-  <button class="stage-pill" data-stage="main"      onclick="filterStage('main')">Main Stage</button>
-  <button class="stage-pill" data-stage="community" onclick="filterStage('community')">Community Lab</button>
-  <button class="stage-pill" data-stage="pixel"     onclick="filterStage('pixel')">Pixel Lab</button>
-  <button class="stage-pill" data-stage="specials"  onclick="filterStage('specials')">Specials</button>
-</div>
+    <div class="sidebar-section">Tage</div>
+    <button class="sidebar-day-btn" data-day="pre"  onclick="switchDay('pre')">
+      <div><div>Pre-Event</div><div class="sidebar-date">Di, 03.03.</div></div>
+    </button>
+    <button class="sidebar-day-btn active" data-day="wed" onclick="switchDay('wed')">
+      <div><div>Mittwoch</div><div class="sidebar-date">04.03.</div></div>
+    </button>
+    <button class="sidebar-day-btn" data-day="thu"  onclick="switchDay('thu')">
+      <div><div>Donnerstag</div><div class="sidebar-date">05.03.</div></div>
+    </button>
+    <button class="sidebar-day-btn" data-day="fav"  onclick="switchDay('fav')">
+      <div style="display:flex;align-items:center;gap:8px">♥ Meine <span class="sidebar-fav-badge" id="fav-count-sidebar" style="display:none">0</span></div>
+    </button>
 
-<div class="content">
-  <!-- PRE -->
-  <div class="day-view" id="day-pre">
-    <div class="banner-area">
-      <div class="now-banner"      id="now-pre"></div>
-      <div class="conflict-banner" id="conflict-pre"></div>
+    <div class="sidebar-section-stage" id="sidebar-stage-section">Stages</div>
+    <button class="sidebar-stage-btn active" data-stage="all"       onclick="filterStage('all')">
+      <span class="sidebar-stage-dot" data-stage="all" style="background:linear-gradient(135deg,#0066cc,#c0006e)"></span>Alle Stages
+    </button>
+    <button class="sidebar-stage-btn" data-stage="main"      onclick="filterStage('main')">
+      <span class="sidebar-stage-dot" data-stage="main"></span>Main Stage
+    </button>
+    <button class="sidebar-stage-btn" data-stage="community" onclick="filterStage('community')">
+      <span class="sidebar-stage-dot" data-stage="community"></span>Community Lab
+    </button>
+    <button class="sidebar-stage-btn" data-stage="pixel"     onclick="filterStage('pixel')">
+      <span class="sidebar-stage-dot" data-stage="pixel"></span>Pixel Lab
+    </button>
+    <button class="sidebar-stage-btn" data-stage="specials"  onclick="filterStage('specials')">
+      <span class="sidebar-stage-dot" data-stage="specials"></span>Specials
+    </button>
+
+    <div class="sidebar-bottom">
+      <button class="dm-toggle-sidebar" id="dm-toggle-sidebar" onclick="toggleDark()">
+        <span id="dm-icon-sidebar">🌙</span> <span id="dm-label">Dark Mode</span>
+      </button>
     </div>
-    <div class="stage-panels-wrapper" id="swipe-pre">
-      <div class="stage-panels" id="panels-pre">
-        <div class="stage-panel" id="panel-pre-all"></div>
-        <div class="stage-panel" id="panel-pre-main"></div>
-        <div class="stage-panel" id="panel-pre-community"></div>
-        <div class="stage-panel" id="panel-pre-pixel"></div>
-        <div class="stage-panel" id="panel-pre-specials"></div>
+  </aside>
+
+  <!-- ── MAIN AREA ─────────────────────────────────────────── -->
+  <div class="main-area">
+
+    <!-- Mobile header -->
+    <header class="mobile-header">
+      <div class="mobile-header-top">
+        <div class="mobile-logo">
+          <span class="mobile-logo-text">LEaT</span>
+          <span class="mobile-logo-x"> X</span>
+          <span class="mobile-logo-year">'26</span>
+        </div>
+        <div class="mobile-header-right">
+          <div class="live-clock"><span class="live-dot"></span><span id="mobile-clock">--:--</span></div>
+          <button class="dm-toggle" id="dm-toggle" onclick="toggleDark()"><span id="dm-icon">🌙</span></button>
+        </div>
+      </div>
+      <div class="mobile-tabs">
+        <button class="tab" data-day="pre"  onclick="switchDay('pre')">03.03 Pre</button>
+        <button class="tab active" data-day="wed" onclick="switchDay('wed')">04.03 Mi</button>
+        <button class="tab" data-day="thu"  onclick="switchDay('thu')">05.03 Do</button>
+        <button class="tab" data-day="fav"  onclick="switchDay('fav')">♥ Meine <span class="fav-badge" id="fav-count" style="display:none">0</span></button>
+      </div>
+    </header>
+
+    <!-- Mobile stage nav -->
+    <div class="stage-nav" id="stage-nav">
+      <div class="stage-nav-inner">
+        <button class="stage-arrow" id="arrow-prev" onclick="stepStage(-1)">‹</button>
+        <div class="stage-label-area">
+          <span class="stage-label-name" id="stage-label-name">Alle Stages</span>
+          <span class="stage-label-hint">← wischen →</span>
+        </div>
+        <button class="stage-arrow" id="arrow-next" onclick="stepStage(1)">›</button>
+      </div>
+      <div class="stage-dots">
+        <span class="stage-dot active" data-stage="all"       onclick="filterStage('all')"></span>
+        <span class="stage-dot"        data-stage="main"      onclick="filterStage('main')"></span>
+        <span class="stage-dot"        data-stage="community" onclick="filterStage('community')"></span>
+        <span class="stage-dot"        data-stage="pixel"     onclick="filterStage('pixel')"></span>
+        <span class="stage-dot"        data-stage="specials"  onclick="filterStage('specials')"></span>
       </div>
     </div>
-  </div>
-  <!-- WED -->
-  <div class="day-view active" id="day-wed">
-    <div class="banner-area">
-      <div class="now-banner"      id="now-wed"></div>
-      <div class="conflict-banner" id="conflict-wed"></div>
-    </div>
-    <div class="stage-panels-wrapper" id="swipe-wed">
-      <div class="stage-panels" id="panels-wed">
-        <div class="stage-panel" id="panel-wed-all"></div>
-        <div class="stage-panel" id="panel-wed-main"></div>
-        <div class="stage-panel" id="panel-wed-community"></div>
-        <div class="stage-panel" id="panel-wed-pixel"></div>
-        <div class="stage-panel" id="panel-wed-specials"></div>
+
+    <div class="content">
+
+      <!-- Desktop page header -->
+      <div class="page-header" id="page-header">
+        <div>
+          <div class="page-title" id="page-title">Mittwoch, 04.03.</div>
+          <div class="page-subtitle">LEaT X München 2026 · Motorworld</div>
+        </div>
+        <div class="page-live-clock"><span class="page-live-dot"></span><span id="desktop-clock">--:--</span></div>
       </div>
-    </div>
-  </div>
-  <!-- THU -->
-  <div class="day-view" id="day-thu">
-    <div class="banner-area">
-      <div class="now-banner"      id="now-thu"></div>
-      <div class="conflict-banner" id="conflict-thu"></div>
-    </div>
-    <div class="stage-panels-wrapper" id="swipe-thu">
-      <div class="stage-panels" id="panels-thu">
-        <div class="stage-panel" id="panel-thu-all"></div>
-        <div class="stage-panel" id="panel-thu-main"></div>
-        <div class="stage-panel" id="panel-thu-community"></div>
-        <div class="stage-panel" id="panel-thu-pixel"></div>
-        <div class="stage-panel" id="panel-thu-specials"></div>
+
+      <!-- PRE -->
+      <div class="day-view" id="day-pre">
+        <div class="banner-area"><div class="now-banner" id="now-pre"></div><div class="conflict-banner" id="conflict-pre"></div></div>
+        <div class="desktop-content">
+          <!-- mobile swipe -->
+          <div class="stage-panels-wrapper" id="swipe-pre">
+            <div class="stage-panels" id="panels-pre">
+              <div class="stage-panel" id="panel-pre-all"></div>
+              <div class="stage-panel" id="panel-pre-main"></div>
+              <div class="stage-panel" id="panel-pre-community"></div>
+              <div class="stage-panel" id="panel-pre-pixel"></div>
+              <div class="stage-panel" id="panel-pre-specials"></div>
+            </div>
+          </div>
+          <!-- desktop grid -->
+          <div class="stage-grid" id="grid-pre" style="display:none"></div>
+        </div>
       </div>
-    </div>
-  </div>
-  <!-- FAV -->
-  <div id="fav-view">
-    <div class="now-banner"      id="now-fav" style="margin:10px 0 0"></div>
-    <div class="conflict-banner" id="conflict-fav" style="margin:6px 0 0"></div>
-    <div id="list-fav"></div>
-  </div>
-</div>
+
+      <!-- WED -->
+      <div class="day-view active" id="day-wed">
+        <div class="banner-area"><div class="now-banner" id="now-wed"></div><div class="conflict-banner" id="conflict-wed"></div></div>
+        <div class="desktop-content">
+          <div class="stage-panels-wrapper" id="swipe-wed">
+            <div class="stage-panels" id="panels-wed">
+              <div class="stage-panel" id="panel-wed-all"></div>
+              <div class="stage-panel" id="panel-wed-main"></div>
+              <div class="stage-panel" id="panel-wed-community"></div>
+              <div class="stage-panel" id="panel-wed-pixel"></div>
+              <div class="stage-panel" id="panel-wed-specials"></div>
+            </div>
+          </div>
+          <div class="stage-grid" id="grid-wed" style="display:none"></div>
+        </div>
+      </div>
+
+      <!-- THU -->
+      <div class="day-view" id="day-thu">
+        <div class="banner-area"><div class="now-banner" id="now-thu"></div><div class="conflict-banner" id="conflict-thu"></div></div>
+        <div class="desktop-content">
+          <div class="stage-panels-wrapper" id="swipe-thu">
+            <div class="stage-panels" id="panels-thu">
+              <div class="stage-panel" id="panel-thu-all"></div>
+              <div class="stage-panel" id="panel-thu-main"></div>
+              <div class="stage-panel" id="panel-thu-community"></div>
+              <div class="stage-panel" id="panel-thu-pixel"></div>
+              <div class="stage-panel" id="panel-thu-specials"></div>
+            </div>
+          </div>
+          <div class="stage-grid" id="grid-thu" style="display:none"></div>
+        </div>
+      </div>
+
+      <!-- FAV -->
+      <div id="fav-view">
+        <div class="fav-view-inner">
+          <div class="now-banner"      id="now-fav" style="margin:10px 0 0"></div>
+          <div class="conflict-banner" id="conflict-fav" style="margin:6px 0 0"></div>
+          <div id="list-fav"></div>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </div><!-- /main-area -->
+</div><!-- /app-shell -->
 
 <div class="footer-note">
   Programm von <a href="https://www.leatcon.com/leat-x/programm/timetable/" target="_blank">leatcon.com</a> · Stand März 2026
@@ -512,105 +642,96 @@ header {
 <script>
 // ── DATA ──────────────────────────────────────────────────────────────
 const PROGRAM = {
-  pre: {
-    label:"Pre-Event, 03.03.26", date:"2026-03-03",
-    sessions:[
-      {id:"pre-1",title:"Haus7 · Studio Tour @ Bavaria Film",start:"17:00",end:"18:30",stage:"specials",speaker:"Geführte Tour mit Michael Hinreiner (TAB-Audio Engineering) und Detlef Eckert (EXG MEDIA)",url:"https://www.leatcon.com/timetable/event/haus7-studio-tour-bavaria-film/"},
-      {id:"pre-2",title:"SAP Garden Backstage Tour",start:"18:00",end:"19:00",stage:"specials",speaker:"Geführte Tour mit Moritz Lehmann (Redbull München), Martin Kuhn (Ross Video), Marc Lorenz (Ayrton)",url:"https://www.leatcon.com/timetable/event/sap-garden-tour-3-maerz-18-uhr/"}
-    ]
-  },
-  wed: {
-    label:"Mittwoch, 04.03.26", date:"2026-03-04",
-    sessions:[
-      {id:"w1",title:"Wireless Audio für jede Location – SOWA im Praxiseinsatz",start:"11:00",end:"11:30",stage:"main",speaker:"Andreas Hench, United B",url:"https://www.leatcon.com/timetable/event/wireless-audio-fuer-jede-location-sowa-im-praxiseinsatz/"},
-      {id:"w2",title:"Selbstständig organisiert: Mit Lexware, sevdesk & Co.",start:"11:00",end:"12:00",stage:"community",speaker:"Workshop | Karin Zweigler (ISDV)",url:"https://www.leatcon.com/timetable/event/selbstorganisation-mit-lexware-sevdesk-buhabut-von-beauftragung-ueber-buchhaltung-bis-erechnung/"},
-      {id:"w3",title:"Hive & GreenHippo",start:"11:00",end:"11:45",stage:"pixel",speaker:"Daniel Frigger, Cast",url:"https://www.leatcon.com/timetable/event/hive-greenhippo/"},
-      {id:"w4",title:"Lehrplan vs. Wirklichkeit: Verantwortung übernehmen",start:"11:45",end:"12:15",stage:"main",speaker:"Panel: Michael Lindner (IHK Akademie München), Casi Will (CrewCall), Kai Grumpe (Friedrich-Ebert-Schule Wiesbaden)",url:"https://www.leatcon.com/timetable/event/stand-der-meisterausbildung/"},
-      {id:"w5",title:"SP Grid: Stop Programming Cues. Start Programming Behavior.",start:"12:00",end:"12:45",stage:"pixel",speaker:"Philip Neyses, Stage Precision",url:"https://www.leatcon.com/timetable/event/sp-grid/"},
-      {id:"w6",title:"Sound Devices: Drahtloses Audio auf Engineering-Level",start:"12:30",end:"13:00",stage:"main",speaker:"Thomas Conen, United B",url:"https://www.leatcon.com/timetable/event/sound-devices-drahtloses-audio-auf-engineering-level/"},
-      {id:"w7",title:"Wie komm ich zu Neukunden? Die richtigen Worte, um ins Gespräch zu kommen",start:"12:30",end:"13:30",stage:"community",speaker:"Workshop | Thomas Adt",url:"https://www.leatcon.com/timetable/event/wie-komm-ich-zu-neukunden-die-richtigen-worte-um-ins-gespraech-zu-kommen/"},
-      {id:"w8",title:"Ross Vertex",start:"13:00",end:"13:45",stage:"pixel",speaker:"Martin Kuhn, Ross Video",url:"https://www.leatcon.com/timetable/event/ross-vertex/"},
-      {id:"w9",title:"TRUE 1 – A new Generation of Data Connectors",start:"13:15",end:"13:45",stage:"main",speaker:"Pascal Hetzenauer, Neutrik EMEA GmbH",url:"https://www.leatcon.com/timetable/event/new-generation-of-data-connectors/"},
-      {id:"w10",title:"MILAN – Status, Praxis & Perspektiven",start:"14:00",end:"14:30",stage:"main",speaker:"Fabian Braun",url:"https://www.leatcon.com/timetable/event/milan-status-praxis-perspektiven-2/"},
-      {id:"w11",title:"Redundante Playback-Systeme mit DAD – Praxis, Workflows & Best Practices",start:"14:00",end:"15:00",stage:"community",speaker:"Workshop | Asger Krog, hosted by en:able",url:"https://www.leatcon.com/timetable/event/redundante-playback-systeme-mit-dad-praxis-workflows-best-practices/"},
-      {id:"w12",title:"Hive & GreenHippo",start:"14:15",end:"15:00",stage:"pixel",speaker:"Daniel Frigger, Cast",url:"https://www.leatcon.com/timetable/event/hive-greenhippo/"},
-      {id:"w13",title:"Motorworld Tour: Ein Blick hinter die Kulissen der Automobilgeschichte",start:"14:00",end:"15:00",stage:"specials",speaker:"Side Event",url:"https://www.leatcon.com/timetable/event/motorworld-tour-ein-blick-hinter-die-kulissen-der-automobilgeschichte/"},
-      {id:"w14",title:"Konvergenz im Netzwerk: Wie IT und Medientechnik zu einer Infrastruktur zusammenwachsen",start:"14:45",end:"15:15",stage:"main",speaker:"Marco Pfiffer, Primation / EXG Media",url:"https://www.leatcon.com/timetable/event/tba/"},
-      {id:"w15",title:"Cheers to 5 Years",start:"15:00",end:"16:00",stage:"specials",speaker:"Jubiläums-Aktion",url:"https://www.leatcon.com/timetable/event/cheers-to-5-years/"},
-      {id:"w16",title:"SP Grid: Stop Programming Cues. Start Programming Behavior.",start:"15:15",end:"16:00",stage:"pixel",speaker:"Philip Neyses, Stage Precision",url:"https://www.leatcon.com/timetable/event/sp-grid/"},
-      {id:"w17",title:"Touring-taugliche Show-Programmierung mit ChamSys",start:"15:30",end:"16:00",stage:"main",speaker:"Frank Alofs, ChamSys Deutschland",url:"https://www.leatcon.com/timetable/event/mediamaster-professionelle-video-workflows-fuer-lichttechniker-integration-praxis/"},
-      {id:"w18",title:"Future Forward: Wie du dein Team auf die KI-Reise mitnimmst",start:"15:30",end:"16:30",stage:"community",speaker:"Workshop | Marcel Courth",url:"https://www.leatcon.com/timetable/event/future-forward-wie-du-dein-team-auf-die-ki-reise-mitnimmst/"},
-      {id:"w19",title:"Funkfrequenzen für PMSE",start:"16:15",end:"16:45",stage:"main",speaker:"Prof. Dr.-Ing. Georg Fischer – FAU Erlangen-Nürnberg – powered by VPLT",url:"https://www.leatcon.com/timetable/event/tba-2/"},
-      {id:"w20",title:"Ross Vertex",start:"16:15",end:"17:00",stage:"pixel",speaker:"Martin Kuhn, Ross Video",url:"https://www.leatcon.com/timetable/event/ross-vertex/"},
-      {id:"w21",title:"Volles Spektrum? Smarte Audioübertragung im Frequenzdschungel",start:"17:00",end:"17:30",stage:"main",speaker:"Sascha Helmstaedt, Shure",url:"https://www.leatcon.com/timetable/event/tba-5/"},
-      {id:"w22",title:"Beyond Borders: The Growing Importance of European Alliances in Event Technology",start:"17:00",end:"18:00",stage:"community",speaker:"Community Talk powered by VPLT – Jürgen Junker, Silke Lalvani, Jean-Marie Le Guen, Peter Heath & Phoebe Currie (PLASA)",url:"https://www.leatcon.com/timetable/event/beyond-borders-the-growing-importance-of-european-alliances-in-event-technology/"},
-      {id:"w23",title:"Auracast – der Gamechanger für Hörunterstützung",start:"17:30",end:"18:00",stage:"main",speaker:"Volker Holtmeyer, Audio Pro Heilbronn",url:"https://www.leatcon.com/timetable/event/backstage-brain-battle/"},
-      {id:"w24",title:"LEaT X Open Doors Networking",start:"18:00",end:"21:00",stage:"specials",speaker:"Open fridges. Open minds. Real connections.",url:"https://www.leatcon.com/timetable/event/leat-x-open-doors/"}
-    ]
-  },
-  thu: {
-    label:"Donnerstag, 05.03.26", date:"2026-03-05",
-    sessions:[
-      {id:"t1",title:"Networked Audio made easy – Dante am Beispiel des Yamaha Ökosystems",start:"11:00",end:"11:30",stage:"main",speaker:"Holger Wiesenberg (Audinate) und Ruben van der Goor (Yamaha)",url:"https://www.leatcon.com/timetable/event/yamaha-dante/"},
-      {id:"t2",title:"Kommunikation, die Brücken baut: Konflikte klug meistern",start:"11:00",end:"12:00",stage:"community",speaker:"Workshop | Nik Gledic",url:"https://www.leatcon.com/timetable/event/kommunikation-die-bruecken-baut-konflikte-klug-meistern-ob-mit-kunden-im-team-oder-als-fuehrungskraft/"},
-      {id:"t3",title:"Ross Vertex",start:"11:00",end:"11:45",stage:"pixel",speaker:"Daniel Kuhn, Ross Video",url:"https://www.leatcon.com/timetable/event/tba-8/"},
-      {id:"t4",title:"Sicher beauftragen und beauftragt werden: Strategien, Konzepte und No-Gos",start:"11:45",end:"12:15",stage:"main",speaker:"Marcus Pohl & Marc Stähly, ISDV",url:"https://www.leatcon.com/timetable/event/sicher-beauftragen-und-beauftragt-werden-strategien-konzepte-und-no-gos/"},
-      {id:"t5",title:"SP Grid: Stop Programming Cues. Start Programming Behavior.",start:"12:00",end:"12:45",stage:"pixel",speaker:"Philip Neyses, Stage Precision",url:"https://www.leatcon.com/timetable/event/tba-11/"},
-      {id:"t6",title:"Spatial Audio mit Wellenfeldsynthese: Kreative Klangräume für Live & Installation",start:"12:30",end:"13:00",stage:"main",speaker:"Sebastian Oeynhausen, Pan Acoustics",url:"https://www.leatcon.com/timetable/event/spatial-audio-mit-wellenfeldsynthese-kreative-klangraeume-fuer-live-installation/"},
-      {id:"t7",title:"Stromverteilungen und Erdungssysteme bei Veranstaltungen",start:"12:30",end:"13:30",stage:"community",speaker:"Workshop | Fabian Nafziger, Neutrik EMEA GmbH",url:"https://www.leatcon.com/timetable/event/stromverteilung/"},
-      {id:"t8",title:"Cheers to 5 Years",start:"13:00",end:"14:00",stage:"specials",speaker:"Jubiläums-Aktion",url:"https://www.leatcon.com/timetable/event/cheers-to-5-years-2/"},
-      {id:"t9",title:"Hive & GreenHippo",start:"13:30",end:"14:15",stage:"pixel",speaker:"Daniel Frigger, Cast",url:"https://www.leatcon.com/timetable/event/hive-greenhippo-2/"},
-      {id:"t10",title:"Hör auf zu verkaufen – fang an Menschen zu verstehen!",start:"14:00",end:"14:30",stage:"main",speaker:"Nik Gledic",url:"https://www.leatcon.com/timetable/event/kommunikation-die-bruecken-baut-konflikte-klug-meistern/"},
-      {id:"t11",title:"Offene Unternehmensberatung mit dem ISDV e.V.",start:"14:00",end:"15:00",stage:"community",speaker:"Marcus Pohl & Marc Stähly",url:"https://www.leatcon.com/timetable/event/ki-in-der-praxis-prozessautomatisierung-2/"},
-      {id:"t12",title:"Motorworld Tour: Ein Blick hinter die Kulissen der Automobilgeschichte",start:"14:00",end:"15:00",stage:"specials",speaker:"Geführte Tour",url:"https://www.leatcon.com/timetable/event/motorworld-tour-ein-blick-hinter-die-kulissen-der-automobilgeschichte-2/"},
-      {id:"t13",title:"Immersive Walking Acts",start:"14:45",end:"15:15",stage:"main",speaker:"Marius Kuschmierz (Holocircle), Eye Systems, Andreas 'Andy' Bauer (AJ Designs)",url:"https://www.leatcon.com/timetable/event/tba-4/"}
-    ]
-  }
+  pre:{label:"Pre-Event, 03.03.26",date:"2026-03-03",sessions:[
+    {id:"pre-1",title:"Haus7 · Studio Tour @ Bavaria Film",start:"17:00",end:"18:30",stage:"specials",speaker:"Geführte Tour mit Michael Hinreiner (TAB-Audio Engineering) und Detlef Eckert (EXG MEDIA)",url:"https://www.leatcon.com/timetable/event/haus7-studio-tour-bavaria-film/"},
+    {id:"pre-2",title:"SAP Garden Backstage Tour",start:"18:00",end:"19:00",stage:"specials",speaker:"Geführte Tour mit Moritz Lehmann (Redbull München), Martin Kuhn (Ross Video), Marc Lorenz (Ayrton)",url:"https://www.leatcon.com/timetable/event/sap-garden-tour-3-maerz-18-uhr/"}
+  ]},
+  wed:{label:"Mittwoch, 04.03.26",date:"2026-03-04",sessions:[
+    {id:"w1",title:"Wireless Audio für jede Location – SOWA im Praxiseinsatz",start:"11:00",end:"11:30",stage:"main",speaker:"Andreas Hench, United B",url:"https://www.leatcon.com/timetable/event/wireless-audio-fuer-jede-location-sowa-im-praxiseinsatz/"},
+    {id:"w2",title:"Selbstständig organisiert: Mit Lexware, sevdesk & Co.",start:"11:00",end:"12:00",stage:"community",speaker:"Workshop | Karin Zweigler (ISDV)",url:"https://www.leatcon.com/timetable/event/selbstorganisation-mit-lexware-sevdesk-buhabut-von-beauftragung-ueber-buchhaltung-bis-erechnung/"},
+    {id:"w3",title:"Hive & GreenHippo",start:"11:00",end:"11:45",stage:"pixel",speaker:"Daniel Frigger, Cast",url:"https://www.leatcon.com/timetable/event/hive-greenhippo/"},
+    {id:"w4",title:"Lehrplan vs. Wirklichkeit: Verantwortung übernehmen",start:"11:45",end:"12:15",stage:"main",speaker:"Panel: Michael Lindner (IHK Akademie München), Casi Will (CrewCall), Kai Grumpe (Friedrich-Ebert-Schule Wiesbaden)",url:"https://www.leatcon.com/timetable/event/stand-der-meisterausbildung/"},
+    {id:"w5",title:"SP Grid: Stop Programming Cues. Start Programming Behavior.",start:"12:00",end:"12:45",stage:"pixel",speaker:"Philip Neyses, Stage Precision",url:"https://www.leatcon.com/timetable/event/sp-grid/"},
+    {id:"w6",title:"Sound Devices: Drahtloses Audio auf Engineering-Level",start:"12:30",end:"13:00",stage:"main",speaker:"Thomas Conen, United B",url:"https://www.leatcon.com/timetable/event/sound-devices-drahtloses-audio-auf-engineering-level/"},
+    {id:"w7",title:"Wie komm ich zu Neukunden? Die richtigen Worte, um ins Gespräch zu kommen",start:"12:30",end:"13:30",stage:"community",speaker:"Workshop | Thomas Adt",url:"https://www.leatcon.com/timetable/event/wie-komm-ich-zu-neukunden-die-richtigen-worte-um-ins-gespraech-zu-kommen/"},
+    {id:"w8",title:"Ross Vertex",start:"13:00",end:"13:45",stage:"pixel",speaker:"Martin Kuhn, Ross Video",url:"https://www.leatcon.com/timetable/event/ross-vertex/"},
+    {id:"w9",title:"TRUE 1 – A new Generation of Data Connectors",start:"13:15",end:"13:45",stage:"main",speaker:"Pascal Hetzenauer, Neutrik EMEA GmbH",url:"https://www.leatcon.com/timetable/event/new-generation-of-data-connectors/"},
+    {id:"w10",title:"MILAN – Status, Praxis & Perspektiven",start:"14:00",end:"14:30",stage:"main",speaker:"Fabian Braun",url:"https://www.leatcon.com/timetable/event/milan-status-praxis-perspektiven-2/"},
+    {id:"w11",title:"Redundante Playback-Systeme mit DAD – Praxis, Workflows & Best Practices",start:"14:00",end:"15:00",stage:"community",speaker:"Workshop | Asger Krog, hosted by en:able",url:"https://www.leatcon.com/timetable/event/redundante-playback-systeme-mit-dad-praxis-workflows-best-practices/"},
+    {id:"w12",title:"Hive & GreenHippo",start:"14:15",end:"15:00",stage:"pixel",speaker:"Daniel Frigger, Cast",url:"https://www.leatcon.com/timetable/event/hive-greenhippo/"},
+    {id:"w13",title:"Motorworld Tour: Ein Blick hinter die Kulissen der Automobilgeschichte",start:"14:00",end:"15:00",stage:"specials",speaker:"Side Event",url:"https://www.leatcon.com/timetable/event/motorworld-tour-ein-blick-hinter-die-kulissen-der-automobilgeschichte/"},
+    {id:"w14",title:"Konvergenz im Netzwerk: Wie IT und Medientechnik zu einer Infrastruktur zusammenwachsen",start:"14:45",end:"15:15",stage:"main",speaker:"Marco Pfiffer, Primation / EXG Media",url:"https://www.leatcon.com/timetable/event/tba/"},
+    {id:"w15",title:"Cheers to 5 Years",start:"15:00",end:"16:00",stage:"specials",speaker:"Jubiläums-Aktion",url:"https://www.leatcon.com/timetable/event/cheers-to-5-years/"},
+    {id:"w16",title:"SP Grid: Stop Programming Cues. Start Programming Behavior.",start:"15:15",end:"16:00",stage:"pixel",speaker:"Philip Neyses, Stage Precision",url:"https://www.leatcon.com/timetable/event/sp-grid/"},
+    {id:"w17",title:"Touring-taugliche Show-Programmierung mit ChamSys",start:"15:30",end:"16:00",stage:"main",speaker:"Frank Alofs, ChamSys Deutschland",url:"https://www.leatcon.com/timetable/event/mediamaster-professionelle-video-workflows-fuer-lichttechniker-integration-praxis/"},
+    {id:"w18",title:"Future Forward: Wie du dein Team auf die KI-Reise mitnimmst",start:"15:30",end:"16:30",stage:"community",speaker:"Workshop | Marcel Courth",url:"https://www.leatcon.com/timetable/event/future-forward-wie-du-dein-team-auf-die-ki-reise-mitnimmst/"},
+    {id:"w19",title:"Funkfrequenzen für PMSE",start:"16:15",end:"16:45",stage:"main",speaker:"Prof. Dr.-Ing. Georg Fischer – FAU Erlangen-Nürnberg – powered by VPLT",url:"https://www.leatcon.com/timetable/event/tba-2/"},
+    {id:"w20",title:"Ross Vertex",start:"16:15",end:"17:00",stage:"pixel",speaker:"Martin Kuhn, Ross Video",url:"https://www.leatcon.com/timetable/event/ross-vertex/"},
+    {id:"w21",title:"Volles Spektrum? Smarte Audioübertragung im Frequenzdschungel",start:"17:00",end:"17:30",stage:"main",speaker:"Sascha Helmstaedt, Shure",url:"https://www.leatcon.com/timetable/event/tba-5/"},
+    {id:"w22",title:"Beyond Borders: The Growing Importance of European Alliances in Event Technology",start:"17:00",end:"18:00",stage:"community",speaker:"Community Talk powered by VPLT – Jürgen Junker, Silke Lalvani, Jean-Marie Le Guen, Peter Heath & Phoebe Currie (PLASA)",url:"https://www.leatcon.com/timetable/event/beyond-borders-the-growing-importance-of-european-alliances-in-event-technology/"},
+    {id:"w23",title:"Auracast – der Gamechanger für Hörunterstützung",start:"17:30",end:"18:00",stage:"main",speaker:"Volker Holtmeyer, Audio Pro Heilbronn",url:"https://www.leatcon.com/timetable/event/backstage-brain-battle/"},
+    {id:"w24",title:"LEaT X Open Doors Networking",start:"18:00",end:"21:00",stage:"specials",speaker:"Open fridges. Open minds. Real connections.",url:"https://www.leatcon.com/timetable/event/leat-x-open-doors/"}
+  ]},
+  thu:{label:"Donnerstag, 05.03.26",date:"2026-03-05",sessions:[
+    {id:"t1",title:"Networked Audio made easy – Dante am Beispiel des Yamaha Ökosystems",start:"11:00",end:"11:30",stage:"main",speaker:"Holger Wiesenberg (Audinate) und Ruben van der Goor (Yamaha)",url:"https://www.leatcon.com/timetable/event/yamaha-dante/"},
+    {id:"t2",title:"Kommunikation, die Brücken baut: Konflikte klug meistern",start:"11:00",end:"12:00",stage:"community",speaker:"Workshop | Nik Gledic",url:"https://www.leatcon.com/timetable/event/kommunikation-die-bruecken-baut-konflikte-klug-meistern-ob-mit-kunden-im-team-oder-als-fuehrungskraft/"},
+    {id:"t3",title:"Ross Vertex",start:"11:00",end:"11:45",stage:"pixel",speaker:"Daniel Kuhn, Ross Video",url:"https://www.leatcon.com/timetable/event/tba-8/"},
+    {id:"t4",title:"Sicher beauftragen und beauftragt werden: Strategien, Konzepte und No-Gos",start:"11:45",end:"12:15",stage:"main",speaker:"Marcus Pohl & Marc Stähly, ISDV",url:"https://www.leatcon.com/timetable/event/sicher-beauftragen-und-beauftragt-werden-strategien-konzepte-und-no-gos/"},
+    {id:"t5",title:"SP Grid: Stop Programming Cues. Start Programming Behavior.",start:"12:00",end:"12:45",stage:"pixel",speaker:"Philip Neyses, Stage Precision",url:"https://www.leatcon.com/timetable/event/tba-11/"},
+    {id:"t6",title:"Spatial Audio mit Wellenfeldsynthese: Kreative Klangräume für Live & Installation",start:"12:30",end:"13:00",stage:"main",speaker:"Sebastian Oeynhausen, Pan Acoustics",url:"https://www.leatcon.com/timetable/event/spatial-audio-mit-wellenfeldsynthese-kreative-klangraeume-fuer-live-installation/"},
+    {id:"t7",title:"Stromverteilungen und Erdungssysteme bei Veranstaltungen",start:"12:30",end:"13:30",stage:"community",speaker:"Workshop | Fabian Nafziger, Neutrik EMEA GmbH",url:"https://www.leatcon.com/timetable/event/stromverteilung/"},
+    {id:"t8",title:"Cheers to 5 Years",start:"13:00",end:"14:00",stage:"specials",speaker:"Jubiläums-Aktion",url:"https://www.leatcon.com/timetable/event/cheers-to-5-years-2/"},
+    {id:"t9",title:"Hive & GreenHippo",start:"13:30",end:"14:15",stage:"pixel",speaker:"Daniel Frigger, Cast",url:"https://www.leatcon.com/timetable/event/hive-greenhippo-2/"},
+    {id:"t10",title:"Hör auf zu verkaufen – fang an Menschen zu verstehen!",start:"14:00",end:"14:30",stage:"main",speaker:"Nik Gledic",url:"https://www.leatcon.com/timetable/event/kommunikation-die-bruecken-baut-konflikte-klug-meistern/"},
+    {id:"t11",title:"Offene Unternehmensberatung mit dem ISDV e.V.",start:"14:00",end:"15:00",stage:"community",speaker:"Marcus Pohl & Marc Stähly",url:"https://www.leatcon.com/timetable/event/ki-in-der-praxis-prozessautomatisierung-2/"},
+    {id:"t12",title:"Motorworld Tour: Ein Blick hinter die Kulissen der Automobilgeschichte",start:"14:00",end:"15:00",stage:"specials",speaker:"Geführte Tour",url:"https://www.leatcon.com/timetable/event/motorworld-tour-ein-blick-hinter-die-kulissen-der-automobilgeschichte-2/"},
+    {id:"t13",title:"Immersive Walking Acts",start:"14:45",end:"15:15",stage:"main",speaker:"Marius Kuschmierz (Holocircle), Eye Systems, Andreas 'Andy' Bauer (AJ Designs)",url:"https://www.leatcon.com/timetable/event/tba-4/"}
+  ]}
 };
 
 const STAGE_ORDER  = ['all','main','community','pixel','specials'];
-const STAGE_LABELS = {all:'Alle Stages', main:'Main Stage', community:'Community Lab', pixel:'Pixel Lab', specials:'Specials'};
-const STAGE_COLORS = {all:'var(--text)',main:'var(--stage-main)',community:'var(--stage-community)',pixel:'var(--stage-pixel)',specials:'var(--stage-specials)'};
+const STAGE_LABELS = {all:'Alle Stages',main:'Main Stage',community:'Community Lab',pixel:'Pixel Lab',specials:'Specials'};
+const STAGE_COLORS = {all:'var(--leat-indigo)',main:'var(--stage-main)',community:'var(--stage-community)',pixel:'var(--stage-pixel)',specials:'var(--stage-specials)'};
+const DAY_TITLES   = {pre:'Pre-Event, 03.03.',wed:'Mittwoch, 04.03.',thu:'Donnerstag, 05.03.',fav:'Meine Favoriten'};
 
-let currentDay   = 'wed';
-let currentStage = 'all';
-let favorites    = JSON.parse(localStorage.getItem('leat-favs') || '[]');
-let darkMode     = localStorage.getItem('leat-dark') === 'true';
+let currentDay='wed', currentStage='all';
+let favorites=JSON.parse(localStorage.getItem('leat-favs')||'[]');
+let darkMode=localStorage.getItem('leat-dark')==='true';
+let isDesktop=window.innerWidth>=900;
 
-// ── DARK MODE ─────────────────────────────────────────────────────────
-function applyDark() {
-  document.documentElement.setAttribute('data-theme', darkMode ? 'dark' : 'light');
-  document.getElementById('dm-toggle').textContent = darkMode ? '☀️' : '🌙';
+// ── DARK MODE ──────────────────────────────────────────────────────────
+function applyDark(){
+  document.documentElement.setAttribute('data-theme',darkMode?'dark':'light');
+  const icon=darkMode?'☀️':'🌙';
+  ['dm-icon','dm-icon-sidebar'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent=icon;});
+  const lbl=document.getElementById('dm-label');
+  if(lbl) lbl.textContent=darkMode?'Light Mode':'Dark Mode';
 }
-function toggleDark() {
-  darkMode = !darkMode;
-  localStorage.setItem('leat-dark', darkMode);
-  applyDark();
-}
+function toggleDark(){darkMode=!darkMode;localStorage.setItem('leat-dark',darkMode);applyDark();}
 applyDark();
 
-// ── TIME UTILS ────────────────────────────────────────────────────────
-function toMin(t) { const [h,m]=t.split(':').map(Number); return h*60+m; }
-function overlaps(a,b) { return toMin(a.start)<toMin(b.end) && toMin(b.start)<toMin(a.end); }
-function isNowPlaying(s, dk) {
-  const now=new Date(), d=PROGRAM[dk]?.date; if(!d) return false;
-  const [y,mo,dy]=d.split('-').map(Number);
-  if(now.getFullYear()!==y||now.getMonth()+1!==mo||now.getDate()!==dy) return false;
+// ── TIME ───────────────────────────────────────────────────────────────
+function toMin(t){const[h,m]=t.split(':').map(Number);return h*60+m;}
+function overlaps(a,b){return toMin(a.start)<toMin(b.end)&&toMin(b.start)<toMin(a.end);}
+function isNowPlaying(s,dk){
+  const now=new Date(),d=PROGRAM[dk]?.date;if(!d)return false;
+  const[y,mo,dy]=d.split('-').map(Number);
+  if(now.getFullYear()!==y||now.getMonth()+1!==mo||now.getDate()!==dy)return false;
   const nm=now.getHours()*60+now.getMinutes();
   return nm>=toMin(s.start)&&nm<toMin(s.end);
 }
-function getConflicts() {
+function getConflicts(){
   const c=new Set();
   ['pre','wed','thu'].forEach(dk=>{
     const f=PROGRAM[dk].sessions.filter(s=>favorites.includes(s.id));
-    f.forEach((a,i)=>f.forEach((b,j)=>{ if(i!==j&&overlaps(a,b)){c.add(a.id);c.add(b.id);} }));
+    f.forEach((a,i)=>f.forEach((b,j)=>{if(i!==j&&overlaps(a,b)){c.add(a.id);c.add(b.id);}}));
   });
   return c;
 }
 
-// ── RENDER ────────────────────────────────────────────────────────────
-function renderCard(s, dk, cs) {
-  const isFav=favorites.includes(s.id), isNow=isNowPlaying(s,dk), isConflict=isFav&&cs.has(s.id);
+// ── RENDER CARD ────────────────────────────────────────────────────────
+function renderCard(s,dk,cs){
+  const isFav=favorites.includes(s.id),isNow=isNowPlaying(s,dk),isConflict=isFav&&cs.has(s.id);
   return `<div class="session-wrap stage-${s.stage}">
   <div class="session-card${isNow?' now-playing':''}${isFav?' favorited':''}${isConflict?' conflict':''}" id="card-${s.id}">
     <div class="card-header" onclick="toggleCard('${s.id}')">
@@ -636,38 +757,58 @@ function renderCard(s, dk, cs) {
 </div>`;
 }
 
-function renderDayForStage(dk, stage) {
-  const data=PROGRAM[dk]; if(!data) return '';
+function sessionsByStage(dk,stage){
   const cs=getConflicts();
-  let sessions=data.sessions;
+  let sessions=PROGRAM[dk].sessions;
   if(stage!=='all') sessions=sessions.filter(s=>s.stage===stage);
-  if(!sessions.length) return `<div style="padding:30px 0 10px;color:var(--muted);font-size:0.82rem;text-align:center;">Keine Sessions für diese Stage.</div>`;
+  if(!sessions.length) return `<div style="padding:20px 0;color:var(--muted);font-size:0.82rem;text-align:center;">Keine Sessions.</div>`;
   const groups={};
-  sessions.forEach(s=>{ (groups[s.start]=groups[s.start]||[]).push(s); });
+  sessions.forEach(s=>{(groups[s.start]=groups[s.start]||[]).push(s);});
   return Object.keys(groups).sort().map(t=>
     `<div class="time-label">${t} Uhr</div>`+groups[t].map(s=>renderCard(s,dk,cs)).join('')
   ).join('');
 }
 
-function renderFavs() {
-  if(!favorites.length) return `<div class="fav-empty"><span class="icon">♥</span>Noch keine Favoriten.<br>Tippe auf ♥ bei einem Programmpunkt.</div>`;
+// ── DESKTOP GRID ───────────────────────────────────────────────────────
+function renderDesktopGrid(dk){
+  const stages=['main','community','pixel','specials'];
   const cs=getConflicts();
-  let html='';
-  ['pre','wed','thu'].forEach(dk=>{
-    const items=PROGRAM[dk].sessions.filter(s=>favorites.includes(s.id));
-    if(!items.length) return;
-    html+=`<div class="day-header">${PROGRAM[dk].label}</div>`;
-    items.sort((a,b)=>a.start.localeCompare(b.start)).forEach(s=>{html+=renderCard(s,dk,cs);});
-  });
-  return html;
+  return stages.map(stage=>{
+    let sessions=PROGRAM[dk].sessions.filter(s=>s.stage===stage);
+    const groups={};
+    sessions.forEach(s=>{(groups[s.start]=groups[s.start]||[]).push(s);});
+    const cards=Object.keys(groups).sort().map(t=>
+      `<div class="time-label">${t} Uhr</div>`+groups[t].map(s=>renderCard(s,dk,cs)).join('')
+    ).join('');
+    return `<div class="stage-grid-col">
+      <div class="stage-col-header" data-stage="${stage}">
+        <span class="stage-col-dot"></span>
+        <span class="stage-col-name">${STAGE_LABELS[stage]}</span>
+      </div>
+      ${cards||'<div style="padding:12px 0;color:var(--muted);font-size:0.8rem;">Keine Sessions.</div>'}
+    </div>`;
+  }).join('');
 }
 
-function renderAll() {
+function renderAll(){
+  isDesktop=window.innerWidth>=900;
   ['pre','wed','thu'].forEach(dk=>{
-    STAGE_ORDER.forEach(stage=>{
-      const el=document.getElementById('panel-'+dk+'-'+stage);
-      if(el) el.innerHTML=renderDayForStage(dk,stage);
-    });
+    if(isDesktop){
+      // show grid, hide panels
+      const grid=document.getElementById('grid-'+dk);
+      const wrapper=document.getElementById('swipe-'+dk);
+      if(grid){grid.innerHTML=renderDesktopGrid(dk);grid.style.display='grid';}
+      if(wrapper) wrapper.style.display='none';
+    } else {
+      const grid=document.getElementById('grid-'+dk);
+      const wrapper=document.getElementById('swipe-'+dk);
+      if(grid) grid.style.display='none';
+      if(wrapper) wrapper.style.display='';
+      STAGE_ORDER.forEach(stage=>{
+        const el=document.getElementById('panel-'+dk+'-'+stage);
+        if(el) el.innerHTML=sessionsByStage(dk,stage);
+      });
+    }
   });
   document.getElementById('list-fav').innerHTML=renderFavs();
   updateNowBanners();
@@ -676,41 +817,51 @@ function renderAll() {
   updateStageUI();
 }
 
-// ── STAGE UI ──────────────────────────────────────────────────────────
-function updateStageUI() {
-  const idx=STAGE_ORDER.indexOf(currentStage);
-  // panels
+function renderFavs(){
+  if(!favorites.length) return `<div class="fav-empty"><span class="icon">♥</span>Noch keine Favoriten.<br>Tippe auf ♥ bei einem Programmpunkt.</div>`;
+  const cs=getConflicts();
+  let html='';
   ['pre','wed','thu'].forEach(dk=>{
-    const p=document.getElementById('panels-'+dk);
-    if(p) p.style.transform=`translateX(-${idx*100}%)`;
+    const items=PROGRAM[dk].sessions.filter(s=>favorites.includes(s.id));
+    if(!items.length)return;
+    html+=`<div class="day-header">${PROGRAM[dk].label}</div>`;
+    items.sort((a,b)=>a.start.localeCompare(b.start)).forEach(s=>{html+=renderCard(s,dk,cs);});
   });
-  // dots
-  document.querySelectorAll('.stage-dot').forEach(d=>d.classList.toggle('active',d.dataset.stage===currentStage));
-  // desktop pills
-  document.querySelectorAll('.stage-pill').forEach(b=>b.classList.toggle('active',b.dataset.stage===currentStage));
-  // label + arrows
-  const labelEl=document.getElementById('stage-label-name');
-  if(labelEl) {
-    labelEl.textContent=STAGE_LABELS[currentStage];
-    labelEl.style.color=STAGE_COLORS[currentStage];
-  }
-  const prevBtn=document.getElementById('arrow-prev');
-  const nextBtn=document.getElementById('arrow-next');
-  if(prevBtn) prevBtn.disabled=(idx===0);
-  if(nextBtn) nextBtn.disabled=(idx===STAGE_ORDER.length-1);
+  return html;
 }
 
-function stepStage(dir) {
+// ── STAGE UI ───────────────────────────────────────────────────────────
+function updateStageUI(){
   const idx=STAGE_ORDER.indexOf(currentStage);
-  const next=idx+dir;
+  // mobile panels
+  if(!isDesktop){
+    ['pre','wed','thu'].forEach(dk=>{
+      const p=document.getElementById('panels-'+dk);
+      if(p) p.style.transform=`translateX(-${idx*100}%)`;
+    });
+  }
+  // dots + pills + sidebar
+  document.querySelectorAll('.stage-dot').forEach(d=>d.classList.toggle('active',d.dataset.stage===currentStage));
+  document.querySelectorAll('.sidebar-stage-btn').forEach(b=>b.classList.toggle('active',b.dataset.stage===currentStage));
+  // label + arrows
+  const ln=document.getElementById('stage-label-name');
+  if(ln){ln.textContent=STAGE_LABELS[currentStage];ln.style.color=STAGE_COLORS[currentStage];}
+  const prev=document.getElementById('arrow-prev'),next=document.getElementById('arrow-next');
+  if(prev) prev.disabled=idx===0;
+  if(next) next.disabled=idx===STAGE_ORDER.length-1;
+}
+
+function stepStage(dir){
+  const idx=STAGE_ORDER.indexOf(currentStage),next=idx+dir;
   if(next>=0&&next<STAGE_ORDER.length) filterStage(STAGE_ORDER[next]);
 }
 
-// ── BANNERS ───────────────────────────────────────────────────────────
-function updateNowBanners() {
+// ── BANNERS ────────────────────────────────────────────────────────────
+function updateNowBanners(){
   ['pre','wed','thu'].forEach(dk=>{
     const cur=PROGRAM[dk].sessions.filter(s=>isNowPlaying(s,dk));
     const el=document.getElementById('now-'+dk);
+    if(!el)return;
     if(cur.length){el.innerHTML=`<span>▶</span><span><strong>Gerade:</strong> ${cur.map(s=>s.title).join(' · ')}</span>`;el.classList.add('visible');}
     else el.classList.remove('visible');
   });
@@ -718,12 +869,14 @@ function updateNowBanners() {
   const ts=`${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}`;
   const tk=Object.keys(PROGRAM).find(k=>PROGRAM[k]?.date===ts);
   const fe=document.getElementById('now-fav');
-  if(tk){const cur=PROGRAM[tk].sessions.filter(s=>isNowPlaying(s,tk)&&favorites.includes(s.id));
+  if(fe&&tk){
+    const cur=PROGRAM[tk].sessions.filter(s=>isNowPlaying(s,tk)&&favorites.includes(s.id));
     if(cur.length){fe.innerHTML=`<span>▶</span><span><strong>Dein Favorit läuft:</strong> ${cur.map(s=>s.title).join(' · ')}</span>`;fe.classList.add('visible');}
-    else fe.classList.remove('visible');}
+    else fe.classList.remove('visible');
+  }
 }
 
-function getConflictPairs(dk) {
+function getConflictPairs(dk){
   const f=PROGRAM[dk].sessions.filter(s=>favorites.includes(s.id));
   const pairs=[],seen=new Set();
   f.forEach((a,i)=>f.forEach((b,j)=>{
@@ -731,52 +884,63 @@ function getConflictPairs(dk) {
   }));
   return pairs;
 }
-function updateConflictBanners() {
+function updateConflictBanners(){
   ['pre','wed','thu'].forEach(dk=>{
-    const el=document.getElementById('conflict-'+dk), pairs=getConflictPairs(dk);
-    if(pairs.length){el.innerHTML=`<span>⚡</span><span><strong>Zeitkonflikt:</strong><br>${pairs.map(([a,b])=>`<strong>${a.title}</strong> (${a.start}) und <strong>${b.title}</strong> (${b.start})`).join('<br>')}</span>`;el.classList.add('visible');}
+    const el=document.getElementById('conflict-'+dk),pairs=getConflictPairs(dk);
+    if(!el)return;
+    if(pairs.length){el.innerHTML=`<span>⚡</span><span><strong>Zeitkonflikt:</strong><br>${pairs.map(([a,b])=>`<strong>${a.title}</strong> (${a.start}) & <strong>${b.title}</strong> (${b.start})`).join('<br>')}</span>`;el.classList.add('visible');}
     else el.classList.remove('visible');
   });
-  const el=document.getElementById('conflict-fav'),allPairs=[],seen=new Set();
-  ['pre','wed','thu'].forEach(dk=>getConflictPairs(dk).forEach(p=>{const k=p.map(s=>s.id).sort().join('|');if(!seen.has(k)){seen.add(k);allPairs.push(p);}}));
-  if(allPairs.length){el.innerHTML=`<span>⚡</span><span><strong>${allPairs.length===1?'1 Zeitkonflikt':allPairs.length+' Zeitkonflikte'}:</strong><br>${allPairs.map(([a,b])=>`<strong>${a.title}</strong> (${a.start}) und <strong>${b.title}</strong> (${b.start})`).join('<br>')}</span>`;el.classList.add('visible');}
+  const el=document.getElementById('conflict-fav'),allP=[],seen=new Set();
+  ['pre','wed','thu'].forEach(dk=>getConflictPairs(dk).forEach(p=>{const k=p.map(s=>s.id).sort().join('|');if(!seen.has(k)){seen.add(k);allP.push(p);}}));
+  if(!el)return;
+  if(allP.length){el.innerHTML=`<span>⚡</span><span><strong>${allP.length===1?'1 Zeitkonflikt':allP.length+' Zeitkonflikte'}:</strong><br>${allP.map(([a,b])=>`<strong>${a.title}</strong> (${a.start}) & <strong>${b.title}</strong> (${b.start})`).join('<br>')}</span>`;el.classList.add('visible');}
   else el.classList.remove('visible');
 }
 
-function updateFavCount() {
-  const b=document.getElementById('fav-count');
-  if(favorites.length){b.textContent=favorites.length;b.style.display='inline-block';}
-  else b.style.display='none';
+function updateFavCount(){
+  const n=favorites.length;
+  ['fav-count','fav-count-sidebar'].forEach(id=>{
+    const b=document.getElementById(id);
+    if(!b)return;
+    if(n){b.textContent=n;b.style.display='inline-block';}else b.style.display='none';
+  });
 }
 
-// ── INTERACTIONS ──────────────────────────────────────────────────────
-function switchDay(day) {
+// ── INTERACTIONS ───────────────────────────────────────────────────────
+function switchDay(day){
   currentDay=day;
   document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.day===day));
+  document.querySelectorAll('.sidebar-day-btn').forEach(b=>b.classList.toggle('active',b.dataset.day===day));
   document.querySelectorAll('.day-view').forEach(v=>v.classList.remove('active'));
   document.getElementById('fav-view').classList.remove('active');
-  const sn=document.getElementById('stage-nav'), sf=document.getElementById('stage-filter-desktop');
+  const sn=document.getElementById('stage-nav');
+  const ss=document.getElementById('sidebar-stage-section');
+  const sbtns=document.querySelectorAll('.sidebar-stage-btn');
   if(day==='fav'){
     document.getElementById('fav-view').classList.add('active');
-    sn.style.display='none'; sf.style.display='none';
+    if(sn) sn.style.display='none';
+    if(ss) ss.style.display='none';
+    sbtns.forEach(b=>b.style.display='none');
   } else {
     document.getElementById('day-'+day).classList.add('active');
-    sn.style.display=''; sf.style.display='';
+    if(sn) sn.style.display='';
+    if(ss) ss.style.display='';
+    sbtns.forEach(b=>b.style.display='');
     initSwipe(day);
   }
+  // update page title
+  const pt=document.getElementById('page-title');
+  if(pt) pt.textContent=DAY_TITLES[day]||'';
   renderAll();
 }
 
-function filterStage(stage) {
+function filterStage(stage){
   currentStage=stage;
-  updateStageUI();
-  updateNowBanners();
-  updateConflictBanners();
-  updateFavCount();
+  renderAll();
 }
 
 function toggleCard(id){document.getElementById('card-'+id).classList.toggle('expanded');}
-
 function toggleFav(e,id){
   e.stopPropagation();
   favorites=favorites.includes(id)?favorites.filter(f=>f!==id):[...favorites,id];
@@ -784,36 +948,42 @@ function toggleFav(e,id){
   renderAll();
 }
 
-// ── SWIPE ─────────────────────────────────────────────────────────────
-function initSwipe(dk) {
-  const wrapper=document.getElementById('swipe-'+dk);
-  if(!wrapper||wrapper._si) return;
-  wrapper._si=true;
+// ── SWIPE ──────────────────────────────────────────────────────────────
+function initSwipe(dk){
+  const w=document.getElementById('swipe-'+dk);
+  if(!w||w._si)return; w._si=true;
   let sx=0,sy=0,drag=false,horiz=null;
-  wrapper.addEventListener('touchstart',e=>{sx=e.touches[0].clientX;sy=e.touches[0].clientY;drag=true;horiz=null;},{passive:true});
-  wrapper.addEventListener('touchmove',e=>{
-    if(!drag) return;
+  w.addEventListener('touchstart',e=>{sx=e.touches[0].clientX;sy=e.touches[0].clientY;drag=true;horiz=null;},{passive:true});
+  w.addEventListener('touchmove',e=>{
+    if(!drag)return;
     const dx=e.touches[0].clientX-sx,dy=e.touches[0].clientY-sy;
     if(horiz===null) horiz=Math.abs(dx)>Math.abs(dy);
     if(horiz) e.preventDefault();
   },{passive:false});
-  wrapper.addEventListener('touchend',e=>{
+  w.addEventListener('touchend',e=>{
     if(!drag||!horiz){drag=false;return;}
     const dx=e.changedTouches[0].clientX-sx; drag=false;
-    if(Math.abs(dx)<40) return;
+    if(Math.abs(dx)<40)return;
     const idx=STAGE_ORDER.indexOf(currentStage);
     if(dx<0&&idx<STAGE_ORDER.length-1) filterStage(STAGE_ORDER[idx+1]);
     if(dx>0&&idx>0) filterStage(STAGE_ORDER[idx-1]);
   },{passive:true});
 }
 
-// ── CLOCK ─────────────────────────────────────────────────────────────
+// ── CLOCK ──────────────────────────────────────────────────────────────
 function updateClock(){
-  const n=new Date();
-  document.getElementById('clock').textContent=String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0');
+  const n=new Date(),t=String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0');
+  ['mobile-clock','sidebar-clock','desktop-clock'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent=t;});
 }
 
-// ── INIT ──────────────────────────────────────────────────────────────
+// ── RESIZE ─────────────────────────────────────────────────────────────
+let resizeTimer;
+window.addEventListener('resize',()=>{
+  clearTimeout(resizeTimer);
+  resizeTimer=setTimeout(()=>{ isDesktop=window.innerWidth>=900; renderAll(); },150);
+});
+
+// ── INIT ───────────────────────────────────────────────────────────────
 renderAll();
 updateClock();
 initSwipe('wed');
